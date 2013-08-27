@@ -46,6 +46,9 @@ Then execute the crontask controller by sake
 
 	./framework/sake dev/cron
 
+_Note_: Run `./framework/sake dev/cron flush=1` to make SilverStripe aware of 
+your new class.
+
 
 The getSchedule method
 ----------------------
