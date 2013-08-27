@@ -10,4 +10,11 @@ class TestCron implements CronTask {
 		return "* * * * *";
 	}
 
+	/**
+	 * 
+	 * @return void
+	 */
+	public function process() {
+		
+	}
 }
