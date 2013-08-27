@@ -1,0 +1,15 @@
+{
+    "name": "silverstripe/crontask",
+	"type": "silverstripe-module",
+    "description": "Module for running tasks with a standard cron timeschedule",
+	"keywords": ["silverstripe", "cron"],
+    "authors": [
+        {
+            "name": "Stig Lindqvist",
+            "email": "stig@stojg.net"
+        }
+    ],
+    "require": {
+		 "mtdowling/cron-expression": "1.0.*"
+    }
+}
