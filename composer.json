@@ -2,13 +2,18 @@
     "name": "silverstripe/crontask",
 	"type": "silverstripe-module",
     "description": "Module for running tasks with a standard cron timeschedule",
+	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "cron"],
-    "authors": [
-        {
-            "name": "Stig Lindqvist",
-            "email": "stig@stojg.net"
-        }
-    ],
+	"authors": [
+		{
+			"name": "SilverStripe",
+			"homepage": "http://silverstripe.com"
+		},
+		{
+			"name": "The SilverStripe Community",
+			"homepage": "http://silverstripe.org"
+		}
+	],
     "require": {
 		 "mtdowling/cron-expression": "1.0.*"
     }
