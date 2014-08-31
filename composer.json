@@ -1,7 +1,7 @@
 {
-    "name": "silverstripe/crontask",
+	"name": "silverstripe/crontask",
 	"type": "silverstripe-module",
-    "description": "Module for running tasks with a standard cron timeschedule",
+	"description": "Module for running tasks with a standard cron timeschedule",
 	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "cron"],
 	"authors": [
@@ -14,7 +14,10 @@
 			"homepage": "http://silverstripe.org"
 		}
 	],
-    "require": {
+	"require": {
 		 "mtdowling/cron-expression": "1.0.*"
-    }
+	},
+	"require-dev": {
+		"phpunit/PHPUnit": "~3.7@stable"
+	}
 }
