@@ -9,7 +9,7 @@
  */
 class CronTaskStatus extends DataObject {
 	
-	private static $db = array(
+	public static $db = array(
 		'TaskClass' => 'Varchar(255)',
 		'LastChecked' => 'SS_Datetime',
 		'LastRun' => 'SS_Datetime'
