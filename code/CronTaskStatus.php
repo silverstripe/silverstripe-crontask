@@ -23,45 +23,6 @@ class CronTaskStatus extends DataObject {
 		'Priority'			=> "Enum('High,Normal,Low','Normal')",
 	);
 
-	/**
-	 * Get the status
-	 *
-	 * @param string $class Name of class which implements CronTask
-	 * @return CronTaskStatus
-	 */
-	public static function get_status($class) {
-		return static::get()
-			->filter('TaskClass', $class)
-			->first();
-	}
-
-	/**
-	 * Update the status for a given class
-	 *
-	 * @param string $class Name of class which implements CronTask
-	 * @param bool $wasRun Flag indicating that the task was run this request
-	 * @param string $status if passed will update the status
-	 * @return CronTaskStatus Status data object
-	 */
-	public static function update_status($class, $wasRun, $status = null) {
-		// Get existing object
-		$object = static::get()
-			->filter('TaskClass', $class)
-			->first();
-		// Create new object if not found
-		if(!$object) {
-			$object = static::create();
-			$object->TaskClass = $class;
-		}
-		// Update fields
-		$now = SS_Datetime::now()->getValue();
-		if($wasRun) $object->LastRun = $now;
-		if($status) $object->Status = $status;
-		$object->LastChecked = $now;
-		$object->write();
-		return $object;
-	}
-
 	public function requireDefaultRecords() {
 		// Register each task
 		$tasks = ClassInfo::subClassesFor('CronTask');
