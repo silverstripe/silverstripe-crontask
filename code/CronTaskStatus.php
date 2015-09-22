@@ -27,11 +27,12 @@ class CronTaskStatus extends DataObject {
 		// Register each task
 		$tasks = ClassInfo::subClassesFor('CronTask');
 
-		foreach($tasks as $taskName)
+		foreach($tasks as $taskName) {
 			if ($taskName == 'CronTask')
 				continue;
 
 			//Creating the task will register it if it's not registered
 			$task = new $taskName();
+		}
 	}
 }
