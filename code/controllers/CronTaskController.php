@@ -79,7 +79,7 @@ class CronTaskController extends Controller {
 	 * @param SS_HTTPRequest $request
 	 */
 	public function index(SS_HTTPRequest $request) {
-		// Check each task
+		
 		$params = $this->request->allParams();
 
 		$action = $params['Action'];
