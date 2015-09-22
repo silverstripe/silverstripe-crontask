@@ -80,15 +80,35 @@ class CronTaskController extends Controller {
 	 */
 	public function index(SS_HTTPRequest $request) {
 		// Check each task
+		$params = $this->request->allParams();
+
+		$action = $params['Action'];
+
 		$tasks = ClassInfo::implementorsOf('CronTask');
+
 		if(empty($tasks)) {
 			$this->output("There are no implementators of CronTask to run");
 			return;
 		}
-		foreach($tasks as $subclass) {
-			$task = new $subclass();
-			$this->runTask($task);
+
+		if($action) {
+			if(in_array($action, $tasks)) {
+				$task = new $action();
+				$this->runTask($task);
+			}
+			else {
+				$this->output($action . " must implement CronTask to run.");
+				return;
+			}
 		}
+		else {
+			foreach($tasks as $subclass) {
+				$task = new $subclass();
+				$this->runTask($task);
+			}
+		}
+
+		
 	}
 
 	/**
