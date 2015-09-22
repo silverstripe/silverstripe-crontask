@@ -51,25 +51,23 @@ class CronTaskController extends Controller {
 	 *
 	 * @param CronTask $task
 	 * @param \Cron\CronExpression $cron
+	 * @return bool
 	 */
 	public function isTaskDue(CronTask $task, \Cron\CronExpression $cron) {
-		// Get last run status
-		$status = CronTaskStatus::get_status(get_class($task));
-		
 		// If the cron is due immediately, then run it
 		$now = new DateTime(SS_Datetime::now()->getValue());
 		if($cron->isDue($now)) {
-			if(empty($status) || empty($status->LastRun)) return true;
+			if(!$task->getLastRun()) return true;
 			// In case this process is invoked twice in one minute, supress subsequent executions
-			$lastRun = new DateTime($status->LastRun);
+			$lastRun = new DateTime($task->getLastRun());
 			return $lastRun->format('Y-m-d H:i') != $now->format('Y-m-d H:i');
 		}
 
 		// If this is the first time this task is ever checked, no way to detect postponed execution
-		if(empty($status) || empty($status->LastChecked)) return false;
+		if(!$task->getLastChecked()) return false;
 
 		// Determine if we have passed the last expected run time
-		$nextExpectedDate = $cron->getNextRunDate($status->LastChecked);
+		$nextExpectedDate = $cron->getNextRunDate($task->getLastChecked());
 		return $nextExpectedDate <= $now;
 	}
 
@@ -79,14 +77,14 @@ class CronTaskController extends Controller {
 	 * @param SS_HTTPRequest $request
 	 */
 	public function index(SS_HTTPRequest $request) {
-		// Check each task
-		$tasks = ClassInfo::implementorsOf('CronTask');
-		if(empty($tasks)) {
+		$taskStatuses = CronTaskStatus::get()->sort('Priority', 'ASC');
+		if(empty($taskStatuses)) {
 			$this->output("There are no implementators of CronTask to run");
 			return;
 		}
-		foreach($tasks as $subclass) {
-			$task = new $subclass();
+		foreach($taskStatuses as $taskStatus) {
+			$taskName = $taskStatus->TaskClass;
+			$task = new $taskName();
 			$this->runTask($task);
 		}
 	}
@@ -97,13 +95,27 @@ class CronTaskController extends Controller {
 	 * @param CronTask $task
 	 */
 	public function runTask(CronTask $task) {
+		$this->checkForErrors($task);
+
+		if ($task->getStatus() == 'Off' || $task->getStatus() == 'Error') {
+			$this->output(get_class($task).' is with status '.$task->getStatus().' and is skipped.');
+			return false;
+		}
+
+		if (!$task->allowMultipleInstances() && $task->getStatus() == 'Running') {
+			$this->output(get_class($task).' is still running.');
+			return false;
+		}
+
 		$cron = Cron\CronExpression::factory($task->getSchedule());
 		$isDue = $this->isTaskDue($task, $cron);
 		// Update status of this task prior to execution in case of interruption
-		CronTaskStatus::update_status(get_class($task), $isDue);
+		$task->updateTaskStatus(array(
+			'LastChecked'	=> SS_Datetime::now()->getValue(),
+		));
 		if($isDue) {
 			$this->output(get_class($task).' will start now.');
-			$task->process();
+			$task->run();
 		} else {
 			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
 		}
@@ -121,5 +133,28 @@ class CronTaskController extends Controller {
 		} else {
 			echo Convert::raw2xml($message).'<br />'.PHP_EOL;
 		}
+	}
+
+	/**
+	 * Check task for errors
+	 *
+	 * For now only execution time is checked against CrontTask->allowedExecutionTime()
+	 *
+	 * @param CronTask $task
+	 */
+	private function checkForErrors(CronTask $task) {
+		//Checking only task in status 'Running'
+		if ($task->getStatus() != 'Running')
+			return;
+
+		if (strtotime(SS_Datetime::now()->getValue()) - strtotime($task->getLastRun()) < $task->allowedExecutionTime())
+			return;
+
+		$task->updateTaskStatus(array(
+			'Status'		=> 'Error',
+			'LastChecked'	=> SS_Datetime::now()->getValue(),
+		));
+
+		$this->output(get_class($task).' running more than ' . $task->allowedExecutionTime() . ' seconds and it\'s status was updated to "Error".');
 	}
 }
