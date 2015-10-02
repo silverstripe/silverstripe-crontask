@@ -20,9 +20,17 @@ Run `composer update` (this will also install needed 3rd party libs in ./vendor)
 Usage
 -----
 
-Extend the `CronTask` abstract class on a new or already existing class:
+Implement the `CronTask` interface on a new or already existing class:
 
-	class TestCron extends CronTask {
+	class TestCron implements CronTask {
+
+		/**
+		 * 
+		 * @return string
+		 */
+		public function getSchedule() {
+			return "5 * * * *";
+		}
 
 		/**
 		 * 
