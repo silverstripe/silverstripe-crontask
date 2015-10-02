@@ -14,7 +14,7 @@ class CronTaskStatus extends DataObject {
 	private static $db = array(
 		'TaskClass' => 'Varchar(255)',
 		'ScheduleString' => 'Varchar(255)',
-		'Status' => "Enum('On,Off,Running,Error','Off')",
+		'Status' => "Enum('On,Off,Running,Error','On')",
 		'LastChecked' => 'SS_Datetime',
 		'LastRun' => 'SS_Datetime'
 	);
@@ -26,9 +26,15 @@ class CronTaskStatus extends DataObject {
 	 * @return CronTaskStatus
 	 */
 	public static function get_status($class) {
-		return static::get()
+		$object = static::get()
 			->filter('TaskClass', $class)
 			->first();
+
+		// Create new object if one does not exists
+		if (!$object)
+			$object = $object = static::register_task($class);
+
+		return $object;
 	}
 
 	/**
@@ -46,7 +52,7 @@ class CronTaskStatus extends DataObject {
 			->first();
 		// Create new object if not found
 		if(!$object) {
-			$object = static::register_task($class);
+			$object = $object = static::register_task($class);
 		}
 		// Update fields
 		$now = SS_Datetime::now()->getValue();

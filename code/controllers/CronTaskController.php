@@ -59,14 +59,14 @@ class CronTaskController extends Controller {
 		// If the cron is due immediately, then run it
 		$now = new DateTime(SS_Datetime::now()->getValue());
 		if($cron->isDue($now)) {
-			if(empty($status) || empty($status->LastRun)) return true;
+			if(empty($status->LastRun)) return true;
 			// In case this process is invoked twice in one minute, supress subsequent executions
 			$lastRun = new DateTime($status->LastRun);
 			return $lastRun->format('Y-m-d H:i') != $now->format('Y-m-d H:i');
 		}
 
 		// If this is the first time this task is ever checked, no way to detect postponed execution
-		if(empty($status) || empty($status->LastChecked)) return false;
+		if(empty($status->LastChecked)) return false;
 
 		// Determine if we have passed the last expected run time
 		$nextExpectedDate = $cron->getNextRunDate($status->LastChecked);
@@ -97,7 +97,22 @@ class CronTaskController extends Controller {
 	 * @param CronTask $task
 	 */
 	public function runTask(CronTask $task) {
-		$cron = Cron\CronExpression::factory($task->getSchedule());
+		$status = CronTaskStatus::get_status(get_class($task));
+
+		if ($this->isLongRunning($status)) {
+			$this->output(get_class($task).' running longer than expected. Setting status to Error');
+			SS_Log::log(get_class($task).' running longer than expected. Setting status to Error', SS_Log::WARN);
+			CronTaskStatus::update_status(get_class($task), false. 'Error');
+			return;
+		}
+
+		if ($status->Status != 'On') {
+			$this->output(get_class($task).' is in status '.$status->Status . ' and will be skipped.');
+			CronTaskStatus::update_status(get_class($task), false);
+			return;
+		}
+
+		$cron = Cron\CronExpression::factory($status->ScheduleString);
 		$isDue = $this->isTaskDue($task, $cron);
 		// Update status of this task prior to execution in case of interruption
 		CronTaskStatus::update_status(get_class($task), $isDue);
@@ -107,6 +122,25 @@ class CronTaskController extends Controller {
 		} else {
 			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
 		}
+	}
+
+	/**
+	 * Check is a task running longer than defined maximum execution time
+	 *
+	 * Maximum execution time is defined in the config.yml for each task
+	 *
+	 * @param $status
+	 * @return bool
+	 */
+	private function isLongRunning($status) {
+		if ($status->Status != 'Running')
+			return false;
+
+		$minutes = Config::inst()->get($status->TaskClass, 'MaxExecutionTime');
+		if (is_null($minutes) || $minutes <= 0)
+			return false;
+
+		return strtotime(SS_Datetime::now()->getValue()) - strtotime($status->LastRun) < $minutes * 60;
 	}
 
 	/**
