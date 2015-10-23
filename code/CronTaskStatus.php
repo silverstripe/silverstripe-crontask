@@ -31,8 +31,9 @@ class CronTaskStatus extends DataObject {
 			->first();
 
 		// Create new object if one does not exists
-		if (!$object)
-			$object = $object = static::register_task($class);
+		if (!$object) {
+			$object = static::register_task($class);
+		}
 
 		return $object;
 	}
@@ -56,8 +57,12 @@ class CronTaskStatus extends DataObject {
 		}
 		// Update fields
 		$now = SS_Datetime::now()->getValue();
-		if($wasRun) $object->LastRun = $now;
-		if($status) $object->Status = $status;
+		if($wasRun) {
+			$object->LastRun = $now;
+			$object->Status = 'Running';
+		} else {
+			if ($status) $object->Status = $status;
+		}
 		$object->LastChecked = $now;
 		$object->write();
 		return $object;

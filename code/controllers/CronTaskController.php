@@ -119,6 +119,7 @@ class CronTaskController extends Controller {
 		if($isDue) {
 			$this->output(get_class($task).' will start now.');
 			$task->process();
+			CronTaskStatus::update_status(get_class($task), false, 'On');
 		} else {
 			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
 		}
@@ -129,7 +130,7 @@ class CronTaskController extends Controller {
 	 *
 	 * Maximum execution time is defined in the config.yml for each task
 	 *
-	 * @param $status
+	 * @param CronTaskStatus $status
 	 * @return bool
 	 */
 	private function isLongRunning($status) {
