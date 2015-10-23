@@ -20,7 +20,7 @@ class CronTaskController extends Controller {
 	 * @param bool $quiet If set to true this controller will not emit debug noise
 	 */
 	public function setQuiet($quiet) {
-		$this->quiet = true;
+		$this->quiet = $quiet;
 	}
 
 	/**
@@ -115,7 +115,7 @@ class CronTaskController extends Controller {
 		$cron = Cron\CronExpression::factory($status->ScheduleString);
 		$isDue = $this->isTaskDue($task, $cron);
 		// Update status of this task prior to execution in case of interruption
-		CronTaskStatus::update_status(get_class($task), $isDue);
+		CronTaskStatus::update_status(get_class($task), $isDue, $isDue ? 'Running' : null);
 		if($isDue) {
 			$this->output(get_class($task).' will start now.');
 			$task->process();

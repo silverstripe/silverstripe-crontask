@@ -19,6 +19,19 @@ class CronTaskStatus extends DataObject {
 		'LastRun' => 'SS_Datetime'
 	);
 
+	public static $summary_fields = array(
+		'TaskClass',
+		'Status',
+		'ScheduleString',
+		'LastChecked',
+		'LastRun'
+	);
+
+	public static $searchable_fields = array(
+		'TaskClass',
+		'Status'
+	);
+
 	/**
 	 * Get the status
 	 *
@@ -57,12 +70,8 @@ class CronTaskStatus extends DataObject {
 		}
 		// Update fields
 		$now = SS_Datetime::now()->getValue();
-		if($wasRun) {
-			$object->LastRun = $now;
-			$object->Status = 'Running';
-		} else {
-			if ($status) $object->Status = $status;
-		}
+		if($wasRun) $object->LastRun = $now;
+		if($status) $object->Status = $status;
 		$object->LastChecked = $now;
 		$object->write();
 		return $object;
@@ -102,5 +111,15 @@ class CronTaskStatus extends DataObject {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Overwrite canDelete method so user can not delete tasks
+	 *
+	 * @param null $member
+	 * @return bool
+	 */
+	public function canDelete($member = null) {
+		return false;
 	}
 }
