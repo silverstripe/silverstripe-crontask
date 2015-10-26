@@ -26,7 +26,7 @@ class CronTaskStatus extends DataObject {
 		'Status',
 		'ScheduleString',
 		'LastRun',
-		'NextRun',
+		'NextRun' => 'Next Run',
 	);
 
 	private static $searchable_fields = array(
@@ -102,6 +102,10 @@ class CronTaskStatus extends DataObject {
 	 * @return string Date time string of next run for this task
 	 */
 	public function getNextRun() {
+		if (!$this->isEnabled()) {
+			return '';
+		}
+
 		$cron = CronExpression::factory($this->ScheduleString);
 		return DBField::create_field('SS_Datetime', $cron->getNextRunDate()->Format('U'))->getValue();
 	}
@@ -137,14 +141,29 @@ class CronTaskStatus extends DataObject {
 
 		$classField = $fields->dataFieldByName('TaskClass');
 		$fields->replaceField('TaskClass', $classField->performReadonlyTransformation());
-		$status = $this->dbObject('Status')->enumValues();
-		unset($status['Running'], $status['Error']);
+		//If task is running we can force it to Off only
+		if ($this->isRunning()) {
+			$fields->removeByName('Status');
+			$fields->insertAfter(new CheckboxField('ForceStatusToOff', 'Force status to "Off"'), 'ScheduleString');
+		} else {
+			$status = $this->dbObject('Status')->enumValues();
+			unset($status['Running'], $status['Error']);
 
-		$fields->dataFieldByName('Status')->setSource($status);
+			$fields->dataFieldByName('Status')->setSource($status);
+		}
 		$fields->removeByName('LastChecked');
 		$fields->removeByName('LastRun');
 
 		return $fields;
+	}
+
+	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+
+		if ($this->ForceStatusToOff) {
+			$this->Status = 'Off';
+			$this->ForceStatusToOff = false;
+		}
 	}
 
 	/**
@@ -156,9 +175,7 @@ class CronTaskStatus extends DataObject {
 	public function canEdit($member = null) {
 		$inst = singleton($this->TaskClass);
 		if($inst instanceof CronTaskEditable) {
-			if (!$this->isRunning()) {
-				return $this->canEdit($member);
-			}
+			return $inst->canEdit($member);
 		}
 		return false;
 	}
