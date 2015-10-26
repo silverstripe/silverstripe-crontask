@@ -16,6 +16,8 @@ class CronTaskStatusModelAdmin extends ModelAdmin {
 
     protected static $menu_title = 'Cron Tasks';
 
+	private static $menu_icon = 'crontask/images/menu-icons/16x16/clock.png';
+
     /**
      * Control is it disabled or enabled
      *
@@ -34,16 +36,4 @@ class CronTaskStatusModelAdmin extends ModelAdmin {
         return self::config()->enabled;
     }
 
-    public function getEditForm($id = null, $fields = null) {
-        $form = parent::getEditForm($id, $fields);
-
-        if($this->modelClass == 'CronTaskStatus') {
-            $gridField = $form->Fields()->fieldByName($this->sanitiseClassName($this->modelClass));
-
-            $config = $gridField->getConfig()->removeComponentsByType('GridFieldDeleteAction')
-                ->removeComponentsByType('GridFieldAddNewButton');
-        }
-
-        return $form;
-    }
 }

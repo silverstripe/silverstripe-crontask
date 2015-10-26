@@ -1,5 +1,7 @@
 <?php
 
+use Cron\CronExpression;
+
 /**
  * Record status of each cron task execution
  *
@@ -16,20 +18,24 @@ class CronTaskStatus extends DataObject {
 		'ScheduleString' => 'Varchar(255)',
 		'Status' => "Enum('On,Off,Running,Error','On')",
 		'LastChecked' => 'SS_Datetime',
-		'LastRun' => 'SS_Datetime'
+		'LastRun' => 'SS_Datetime',
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'TaskClass',
 		'Status',
 		'ScheduleString',
-		'LastChecked',
-		'LastRun'
+		'LastRun',
+		'NextRun',
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'TaskClass',
-		'Status'
+		'Status',
+	);
+
+	private static $casting = array(
+		'NextRun' => 'SS_Datetime',
 	);
 
 	/**
@@ -61,13 +67,7 @@ class CronTaskStatus extends DataObject {
 	 */
 	public static function update_status($class, $wasRun, $status = null) {
 		// Get existing object
-		$object = static::get()
-			->filter('TaskClass', $class)
-			->first();
-		// Create new object if not found
-		if(!$object) {
-			$object = $object = static::register_task($class);
-		}
+		$object = self::get_status($class);
 		// Update fields
 		$now = SS_Datetime::now()->getValue();
 		if($wasRun) $object->LastRun = $now;
@@ -99,6 +99,35 @@ class CronTaskStatus extends DataObject {
 	}
 
 	/**
+	 * @return string Date time string of next run for this task
+	 */
+	public function getNextRun() {
+		$cron = CronExpression::factory($this->ScheduleString);
+		return DBField::create_field('SS_Datetime', $cron->getNextRunDate()->Format('U'))->getValue();
+	}
+
+	/**
+	 * @return bool Is the task running
+	 */
+	public function isRunning() {
+		return $this->Status == 'Running';
+	}
+
+	/**
+	 * @return bool Has the task errored
+	 */
+	public function isErrored() {
+		return $this->Status == 'Error';
+	}
+
+	/**
+	 * @return bool Is the task enabled
+	 */
+	public function isEnabled() {
+		return $this->Status == 'On' || $this->isRunning();
+	}
+
+	/**
 	 * Configure the fields in the form
 	 *
 	 * @return FieldList
@@ -106,7 +135,12 @@ class CronTaskStatus extends DataObject {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
-		$fields->dataFieldByName('TaskClass')->setReadonly(true);
+		$classField = $fields->dataFieldByName('TaskClass');
+		$fields->replaceField('TaskClass', $classField->performReadonlyTransformation());
+		$status = $this->dbObject('Status')->enumValues();
+		unset($status['Running'], $status['Error']);
+
+		$fields->dataFieldByName('Status')->setSource($status);
 		$fields->removeByName('LastChecked');
 		$fields->removeByName('LastRun');
 
@@ -122,10 +156,11 @@ class CronTaskStatus extends DataObject {
 	public function canEdit($member = null) {
 		$inst = singleton($this->TaskClass);
 		if($inst instanceof CronTaskEditable) {
-			return $inst->canEdit($member);
-		} else {
-			return false;
+			if (!$this->isRunning()) {
+				return $this->canEdit($member);
+			}
 		}
+		return false;
 	}
 
 	/**
@@ -160,7 +195,7 @@ class CronTaskStatus extends DataObject {
 	public function validate() {
 		$result = parent::validate();
 		try {
-			Cron\CronExpression::factory($this->ScheduleString);
+			CronExpression::factory($this->ScheduleString);
 		} catch (Exception $ex) {
 			$result->error($ex->getMessage());
 		}

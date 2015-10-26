@@ -1,4 +1,7 @@
 <?php
+
+use Cron\CronExpression;
+
 /**
  * This is the controller that finds, checks and process all crontasks
  * 
@@ -50,9 +53,9 @@ class CronTaskController extends Controller {
 	 * Determine if a task should be run
 	 *
 	 * @param CronTask $task
-	 * @param \Cron\CronExpression $cron
+	 * @param CronExpression $cron
 	 */
-	public function isTaskDue(CronTask $task, \Cron\CronExpression $cron) {
+	public function isTaskDue(CronTask $task, CronExpression $cron) {
 		// Get last run status
 		$status = CronTaskStatus::get_status(get_class($task));
 		
@@ -106,20 +109,21 @@ class CronTaskController extends Controller {
 			return;
 		}
 
-		if ($status->Status != 'On') {
+		if (!$status->isEnabled()) {
 			$this->output(get_class($task).' is in status '.$status->Status . ' and will be skipped.');
 			CronTaskStatus::update_status(get_class($task), false);
 			return;
 		}
 
-		$cron = Cron\CronExpression::factory($status->ScheduleString);
+		$cron = CronExpression::factory($status->ScheduleString);
 		$isDue = $this->isTaskDue($task, $cron);
 		// Update status of this task prior to execution in case of interruption
 		CronTaskStatus::update_status(get_class($task), $isDue, $isDue ? 'Running' : null);
 		if($isDue) {
 			$this->output(get_class($task).' will start now.');
 			$task->process();
-			CronTaskStatus::update_status(get_class($task), false, 'On');
+			$status = CronTaskStatus::get_status(get_class($task));
+			CronTaskStatus::update_status(get_class($task), false, $status->isEnabled() ? 'On' : null);
 		} else {
 			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
 		}
@@ -134,14 +138,16 @@ class CronTaskController extends Controller {
 	 * @return bool
 	 */
 	private function isLongRunning($status) {
-		if ($status->Status != 'Running')
+		if ($status->isRunning()) {
 			return false;
+		}
 
 		$minutes = Config::inst()->get($status->TaskClass, 'MaxExecutionTime');
-		if (is_null($minutes) || $minutes <= 0)
+		if (is_null($minutes) || $minutes <= 0) {
 			return false;
+		}
 
-		return SS_Datetime::now()->Format('U') - $status->dbObject('LastRun')->Format('U') < $minutes * 60;
+		return (SS_Datetime::now()->Format('U') - $status->dbObject('LastRun')->Format('U')) < $minutes * 60;
 	}
 
 	/**
