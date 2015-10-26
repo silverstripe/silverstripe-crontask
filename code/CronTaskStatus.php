@@ -131,10 +131,22 @@ class CronTaskStatus extends DataObject {
 	/**
 	 * Overwrite canDelete method so user can not delete tasks
 	 *
-	 * @param null $member
+	 * @param null|Member $member
 	 * @return bool
 	 */
 	public function canDelete($member = null) {
+		return false;
+	}
+
+	/**
+	 * Overwrite canDelete method so user can not create tasks
+	 *
+	 * All new tasks will be registered by CronTaskController
+	 *
+	 * @param null|Member $member
+	 * @return bool
+	 */
+	public function canCreate($member = null) {
 		return false;
 	}
 
