@@ -41,8 +41,7 @@ class CronTaskStatusModelAdmin extends ModelAdmin {
             $gridField = $form->Fields()->fieldByName($this->sanitiseClassName($this->modelClass));
 
             $config = $gridField->getConfig()->removeComponentsByType('GridFieldDeleteAction')
-                ->removeComponentsByType('GridFieldAddNewButton')
-                ->removeComponentsByType('GridFieldGroupOperations');
+                ->removeComponentsByType('GridFieldAddNewButton');
         }
 
         return $form;

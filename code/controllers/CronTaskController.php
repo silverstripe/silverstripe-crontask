@@ -141,7 +141,7 @@ class CronTaskController extends Controller {
 		if (is_null($minutes) || $minutes <= 0)
 			return false;
 
-		return strtotime(SS_Datetime::now()->getValue()) - strtotime($status->LastRun) < $minutes * 60;
+		return SS_Datetime::now()->Format('U') - $status->dbObject('LastRun')->Format('U') < $minutes * 60;
 	}
 
 	/**
