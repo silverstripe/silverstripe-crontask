@@ -99,6 +99,21 @@ class CronTaskStatus extends DataObject {
 	}
 
 	/**
+	 * Configure the fields in the form
+	 *
+	 * @return FieldList
+	 */
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+
+		$fields->dataFieldByName('TaskClass')->setReadonly(true);
+		$fields->removeByName('LastChecked');
+		$fields->removeByName('LastRun');
+
+		return $fields;
+	}
+
+	/**
 	 * Overwrite canEdit method so only tasks extending CronTaskEditable could be edited
 	 *
 	 * @param null|Member $member
@@ -121,5 +136,23 @@ class CronTaskStatus extends DataObject {
 	 */
 	public function canDelete($member = null) {
 		return false;
+	}
+
+	/**
+	 * Validating the input
+	 *
+	 * ScheduleString will be validated before write
+	 *
+	 * @return ValidationResult
+	 */
+	public function validate() {
+		$result = parent::validate();
+		try {
+			Cron\CronExpression::factory($this->ScheduleString);
+		} catch (Exception $ex) {
+			$result->error($ex->getMessage());
+		}
+
+		return $result;
 	}
 }
