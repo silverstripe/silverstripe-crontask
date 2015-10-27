@@ -102,6 +102,12 @@ class CronTaskController extends Controller {
 	public function runTask(CronTask $task) {
 		$status = CronTaskStatus::get_status(get_class($task));
 
+		if (!$status->lock()) {
+			$this->output(get_class($task).' is currently checking by other instance and will be skipped.');
+			CronTaskStatus::update_status(get_class($task), false);
+			return;
+		}
+
 		if ($this->isLongRunning($status)) {
 			$this->output(get_class($task).' running longer than expected. Setting status to Error');
 			SS_Log::log(get_class($task).' running longer than expected. Setting status to Error', SS_Log::WARN);
@@ -110,6 +116,12 @@ class CronTaskController extends Controller {
 		}
 
 		if (!$status->isEnabled()) {
+			$this->output(get_class($task).' is disabled and will be skipped.');
+			CronTaskStatus::update_status(get_class($task), false);
+			return;
+		}
+
+		if (!$status->isChecking()) {
 			$this->output(get_class($task).' is in status '.$status->Status . ' and will be skipped.');
 			CronTaskStatus::update_status(get_class($task), false);
 			return;
@@ -123,10 +135,11 @@ class CronTaskController extends Controller {
 			$this->output(get_class($task).' will start now.');
 			$task->process();
 			$status = CronTaskStatus::get_status(get_class($task));
-			CronTaskStatus::update_status(get_class($task), false, $status->isEnabled() ? 'On' : null);
 		} else {
 			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
 		}
+
+		$status->unlock();
 	}
 
 	/**

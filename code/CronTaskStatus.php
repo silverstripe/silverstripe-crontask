@@ -10,27 +10,39 @@ use Cron\CronExpression;
  * @property string $TaskClass Class of this task
  * @property string $ScheduleString schedule string
  * @property string $Status status of the task
+ * @property boolean $Enabled is this task enabled or not by default true
+ * @property boolean $IsLocked is set to true when CronTaskController start to check and process this task
  */
 class CronTaskStatus extends DataObject {
 	
 	private static $db = array(
 		'TaskClass' => 'Varchar(255)',
+		'Enabled' => 'Boolean',
 		'ScheduleString' => 'Varchar(255)',
-		'Status' => "Enum('On,Off,Running,Error','On')",
+		'Status' => "Enum('Running,Checking,Error,Pending','Pending')",
 		'LastChecked' => 'SS_Datetime',
 		'LastRun' => 'SS_Datetime',
+		'IsLocked' => 'Boolean',
+	);
+
+	private static $defaults = array(
+		'Status' => 'Pending',
+		'Enabled' => true,
+		'IsLocked' => false,
 	);
 
 	private static $summary_fields = array(
 		'TaskClass',
+		'Enabled',
 		'Status',
 		'ScheduleString',
 		'LastRun',
-		'NextRun' => 'Next Run',
+		'NextRun',
 	);
 
 	private static $searchable_fields = array(
 		'TaskClass',
+		'Enabled',
 		'Status',
 	);
 
@@ -80,8 +92,8 @@ class CronTaskStatus extends DataObject {
 	/**
 	 * Register new task
 	 *
-	 * By default all new tasks are in status 'On' and
-	 * will use default schedule string
+	 * By default all new tasks are in status 'Pending' and
+	 * enabled. Default schedule string will be used.
 	 *
 	 * @param string $class
 	 * @return static
@@ -92,7 +104,9 @@ class CronTaskStatus extends DataObject {
 		$object->update(array(
 			'TaskClass' => $class,
 			'ScheduleString' => $inst->getSchedule(),
-			'Status' => 'On'
+			'Status' => 'Pending',
+			'Enabled' => true,
+			'IsLocked' => false,
 		));
 
 		return $object;
@@ -118,6 +132,13 @@ class CronTaskStatus extends DataObject {
 	}
 
 	/**
+	 * @return bool Is the task pending
+	 */
+	public function isPending() {
+		return $this->Status == 'Pending';
+	}
+
+	/**
 	 * @return bool Has the task errored
 	 */
 	public function isErrored() {
@@ -128,7 +149,14 @@ class CronTaskStatus extends DataObject {
 	 * @return bool Is the task enabled
 	 */
 	public function isEnabled() {
-		return $this->Status == 'On' || $this->isRunning();
+		return $this->Enabled;
+	}
+
+	/**
+	 * @return bool Is the task is in status 'Checking'
+	 */
+	public function isChecking() {
+		return $this->Status == 'Checking';
 	}
 
 	/**
@@ -140,17 +168,15 @@ class CronTaskStatus extends DataObject {
 		$fields = parent::getCMSFields();
 
 		$classField = $fields->dataFieldByName('TaskClass');
+		$statusField = $fields->dataFieldByName('Status');
 		$fields->replaceField('TaskClass', $classField->performReadonlyTransformation());
-		//If task is running we can force it to Off only
-		if ($this->isRunning()) {
-			$fields->removeByName('Status');
-			$fields->insertAfter(new CheckboxField('ForceStatusToOff', 'Force status to "Off"'), 'ScheduleString');
-		} else {
-			$status = $this->dbObject('Status')->enumValues();
-			unset($status['Running'], $status['Error']);
+		$fields->replaceField('Status', $statusField->performReadonlyTransformation());
 
-			$fields->dataFieldByName('Status')->setSource($status);
+		//If task status is running/checking/errored we can force it to "Pending"
+		if ($this->isRunning() || $this->isChecking() || $this->isErrored()) {
+			$fields->insertAfter(new CheckboxField('ForceStatusToOff', 'Force status to "Pending"'), 'Status');
 		}
+
 		$fields->removeByName('LastChecked');
 		$fields->removeByName('LastRun');
 
@@ -161,9 +187,50 @@ class CronTaskStatus extends DataObject {
 		parent::onBeforeWrite();
 
 		if ($this->ForceStatusToOff) {
-			$this->Status = 'Off';
+			$this->Status = 'Pending';
+			$this->IsLocked = false;
 			$this->ForceStatusToOff = false;
 		}
+	}
+
+	/**
+	 * Locking task
+	 *
+	 * No other instance of CronTaskController can
+	 * check or process locked task
+	 * Status will be set to 'Checking'
+	 *
+	 * If task is currently locked will return false
+	 *
+	 * @throws ValidationException
+	 * @return boolean
+	 */
+	public function lock() {
+		if ($this->IsLocked) {
+			return false;
+		}
+
+		$this->IsLocked = true;
+		$this->Status = 'Checking';
+		$this->write();
+
+		return true;
+	}
+
+	/**
+	 * Unlock task
+	 *
+	 * Unlock task so other instances of CronTaskController can
+	 * check and process it.
+	 * Status will be set back to 'Pending'.
+	 *
+	 * @throws ValidationException
+	 * @throws null
+	 */
+	public function unlock() {
+		$this->IsLocked = false;
+		$this->Status = 'Pending';
+		$this->write();
 	}
 
 	/**
