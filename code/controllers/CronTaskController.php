@@ -117,16 +117,29 @@ class CronTaskController extends Controller {
 	 * @param CronTask $task
 	 */
 	public function runTask(CronTask $task) {
-		$cron = Cron\CronExpression::factory($task->getSchedule());
-		$isDue = $this->isTaskDue($task, $cron);
-		// Update status of this task prior to execution in case of interruption
-		CronTaskStatus::update_status(get_class($task), $isDue);
-		if($isDue) {
-			$this->output(get_class($task).' will start now.');
-			$task->process();
-		} else {
-			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
+
+		$canRunTask = true;
+
+		if(method_exists($task, "canRunTask")) {
+			$canRunTask = $task->canRunTask();
 		}
+
+		if($canRunTask) {
+			$cron = Cron\CronExpression::factory($task->getSchedule());
+			$isDue = $this->isTaskDue($task, $cron);
+			// Update status of this task prior to execution in case of interruption
+			CronTaskStatus::update_status(get_class($task), $isDue);
+			if($isDue) {
+				$this->output(get_class($task).' will start now.');
+				$task->process();
+			} else {
+				$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
+			}
+		}
+		else {
+			$this->output(get_class($task).' cannot run.');
+		}
+
 	}
 
 	/**
