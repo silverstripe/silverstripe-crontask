@@ -129,7 +129,7 @@ class CronTaskController extends Controller {
 			$isDue = $this->isTaskDue($task, $cron);
 			// Update status of this task prior to execution in case of interruption
 			CronTaskStatus::update_status(get_class($task), $isDue);
-			if($isDue) {
+			if(Director::isLive() == false || $isDue) {
 				$this->output(get_class($task).' will start now.');
 				$task->process();
 			} else {
