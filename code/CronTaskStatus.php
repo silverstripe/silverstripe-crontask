@@ -22,13 +22,11 @@ class CronTaskStatus extends DataObject {
 		'Status' => "Enum('Running,Checking,Error,Pending','Pending')",
 		'LastChecked' => 'SS_Datetime',
 		'LastRun' => 'SS_Datetime',
-		'IsLocked' => 'Boolean',
 	);
 
 	private static $defaults = array(
 		'Status' => 'Pending',
 		'Enabled' => true,
-		'IsLocked' => false,
 	);
 
 	private static $summary_fields = array(
@@ -104,9 +102,12 @@ class CronTaskStatus extends DataObject {
 		$object->update(array(
 			'TaskClass' => $class,
 			'ScheduleString' => $inst->getSchedule(),
-			'Status' => 'Pending',
-			'Enabled' => true,
-			'IsLocked' => false,
+			'Status' => Config::inst()->get('CronTaskStatus', 'defaultStatus')
+				? Config::inst()->get('CronTaskStatus', 'defaultStatus')
+				: 'Pending',
+			'Enabled' => Config::inst()->get('CronTaskStatus', 'defaultIsEnabled')
+				? Config::inst()->get('CronTaskStatus', 'defaultIsEnabled')
+				: true,
 		));
 
 		return $object;
@@ -150,13 +151,6 @@ class CronTaskStatus extends DataObject {
 	 */
 	public function isEnabled() {
 		return $this->Enabled;
-	}
-
-	/**
-	 * @return bool Is the task is in status 'Checking'
-	 */
-	public function isChecking() {
-		return $this->Status == 'Checking';
 	}
 
 	/**

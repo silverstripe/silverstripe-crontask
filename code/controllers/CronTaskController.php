@@ -83,12 +83,16 @@ class CronTaskController extends Controller {
 	 */
 	public function index(SS_HTTPRequest $request) {
 		// Check each task
-		$tasks = ClassInfo::implementorsOf('CronTask');
+		$tasks = ClassInfo::subclassesFor('CronTask');
 		if(empty($tasks)) {
-			$this->output("There are no implementators of CronTask to run");
+			$this->output("There are no implementations of CronTask to run");
 			return;
 		}
 		foreach($tasks as $subclass) {
+			if ($subclass == 'CronTask') {
+				continue;
+			}
+
 			$task = new $subclass();
 			$this->runTask($task);
 		}
@@ -100,67 +104,20 @@ class CronTaskController extends Controller {
 	 * @param CronTask $task
 	 */
 	public function runTask(CronTask $task) {
-		$status = CronTaskStatus::get_status(get_class($task));
+		$class_name = get_class($task);
 
-		if (!$status->lock()) {
-			$this->output(get_class($task).' is currently checking by other instance and will be skipped.');
-			CronTaskStatus::update_status(get_class($task), false);
-			return;
-		}
-
-		if ($this->isLongRunning($status)) {
-			$this->output(get_class($task).' running longer than expected. Setting status to Error');
-			SS_Log::log(get_class($task).' running longer than expected. Setting status to Error', SS_Log::WARN);
-			CronTaskStatus::update_status(get_class($task), false. 'Error');
-			return;
-		}
-
-		if (!$status->isEnabled()) {
-			$this->output(get_class($task).' is disabled and will be skipped.');
-			CronTaskStatus::update_status(get_class($task), false);
-			return;
-		}
-
-		if (!$status->isChecking()) {
-			$this->output(get_class($task).' is in status '.$status->Status . ' and will be skipped.');
-			CronTaskStatus::update_status(get_class($task), false);
-			return;
-		}
+		$status = CronTaskStatus::get_status($class_name);
 
 		$cron = CronExpression::factory($status->ScheduleString);
 		$isDue = $this->isTaskDue($task, $cron);
-		// Update status of this task prior to execution in case of interruption
-		CronTaskStatus::update_status(get_class($task), $isDue, $isDue ? 'Running' : null);
 		if($isDue) {
-			$this->output(get_class($task).' will start now.');
-			$task->process();
-			$status = CronTaskStatus::get_status(get_class($task));
+			$this->output($class_name . ' will start now.');
+			$task->doProcess();
+			foreach($task->getMessages() as $message)
+				$this->output($class_name . ': ' . $message);
 		} else {
-			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
+			$this->output($class_name . ' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
 		}
-
-		$status->unlock();
-	}
-
-	/**
-	 * Check is a task running longer than defined maximum execution time
-	 *
-	 * Maximum execution time is defined in the config.yml for each task
-	 *
-	 * @param CronTaskStatus $status
-	 * @return bool
-	 */
-	private function isLongRunning($status) {
-		if ($status->isRunning()) {
-			return false;
-		}
-
-		$minutes = Config::inst()->get($status->TaskClass, 'MaxExecutionTime');
-		if (is_null($minutes) || $minutes <= 0) {
-			return false;
-		}
-
-		return (SS_Datetime::now()->Format('U') - $status->dbObject('LastRun')->Format('U')) < $minutes * 60;
 	}
 
 	/**
