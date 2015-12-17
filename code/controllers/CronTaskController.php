@@ -79,16 +79,36 @@ class CronTaskController extends Controller {
 	 * @param SS_HTTPRequest $request
 	 */
 	public function index(SS_HTTPRequest $request) {
-		// Check each task
+		
+		$params = $this->request->allParams();
+
+		$action = $params['Action'];
+
 		$tasks = ClassInfo::implementorsOf('CronTask');
+
 		if(empty($tasks)) {
 			$this->output("There are no implementators of CronTask to run");
 			return;
 		}
-		foreach($tasks as $subclass) {
-			$task = new $subclass();
-			$this->runTask($task);
+
+		if($action) {
+			if(in_array($action, $tasks)) {
+				$task = new $action();
+				$this->runTask($task);
+			}
+			else {
+				$this->output($action . " must implement CronTask to run.");
+				return;
+			}
 		}
+		else {
+			foreach($tasks as $subclass) {
+				$task = new $subclass();
+				$this->runTask($task);
+			}
+		}
+
+		
 	}
 
 	/**
@@ -97,16 +117,43 @@ class CronTaskController extends Controller {
 	 * @param CronTask $task
 	 */
 	public function runTask(CronTask $task) {
-		$cron = Cron\CronExpression::factory($task->getSchedule());
-		$isDue = $this->isTaskDue($task, $cron);
-		// Update status of this task prior to execution in case of interruption
-		CronTaskStatus::update_status(get_class($task), $isDue);
-		if($isDue) {
-			$this->output(get_class($task).' will start now.');
-			$task->process();
-		} else {
-			$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
+
+		$canRunTask = true;
+		$enforceSchedule = true;
+		$isDue = true;
+
+		if(method_exists($task, "canRunTask")) {
+			$canRunTask = $task->canRunTask();
 		}
+
+		if(method_exists($task, "enforceSchedule")) {
+			$enforceSchedule = $task->enforceSchedule();
+		}
+
+		if($canRunTask) {
+
+			if($enforceSchedule) {
+				$cron = Cron\CronExpression::factory($task->getSchedule());
+				$isDue = $this->isTaskDue($task, $cron);
+			}			
+
+			// Update status of this task prior to execution in case of interruption
+			CronTaskStatus::update_status(get_class($task), $isDue);
+
+			if($isDue) {
+				$this->output(get_class($task).' will start now.');
+				$task->process();
+			} else {
+				$this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
+			}
+
+		}
+		else {
+
+			$this->output(get_class($task).' cannot run.');
+			
+		}
+
 	}
 
 	/**
