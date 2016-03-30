@@ -1,7 +1,8 @@
 <?php
+
 /**
  * This is the controller that finds, checks and process all crontasks
- * 
+ *
  * The default route to this controller is 'dev/cron'
  *
  */
@@ -9,21 +10,11 @@ class CronTaskController extends Controller
 {
 
     /**
-     * If this controller is in quiet mode
+     * Setting this to true will make the controller print debug information
      *
      * @var bool
      */
-    protected $quiet = false;
-
-    /**
-     * Tell the controller how noisy it may be
-     *
-     * @param bool $quiet If set to true this controller will not emit debug noise
-     */
-    public function setQuiet($quiet)
-    {
-        $this->quiet = true;
-    }
+    protected $verbose = false;
 
     /**
      * Checks for cli or admin permissions and include the library
@@ -54,12 +45,14 @@ class CronTaskController extends Controller
      *
      * @param CronTask $task
      * @param \Cron\CronExpression $cron
+     *
+     * @return bool
      */
     public function isTaskDue(CronTask $task, \Cron\CronExpression $cron)
     {
         // Get last run status
         $status = CronTaskStatus::get_status(get_class($task));
-        
+
         // If the cron is due immediately, then run it
         $now = new DateTime(SS_Datetime::now()->getValue());
         if ($cron->isDue($now)) {
@@ -88,6 +81,9 @@ class CronTaskController extends Controller
      */
     public function index(SS_HTTPRequest $request)
     {
+        if($request->requestVar('verbose')) {
+            $this->verbose = true;
+        }
         // Check each task
         $tasks = ClassInfo::implementorsOf('CronTask');
         if (empty($tasks)) {
@@ -112,10 +108,10 @@ class CronTaskController extends Controller
         // Update status of this task prior to execution in case of interruption
         CronTaskStatus::update_status(get_class($task), $isDue);
         if ($isDue) {
-            $this->output(get_class($task).' will start now.');
+            $this->output(get_class($task) . ' will start now.');
             $task->process();
         } else {
-            $this->output(get_class($task).' will run at '.$cron->getNextRunDate()->format('Y-m-d H:i:s').'.');
+            $this->output(get_class($task) . ' will run at ' . $cron->getNextRunDate()->format('Y-m-d H:i:s') . '.');
         }
     }
 
@@ -126,13 +122,13 @@ class CronTaskController extends Controller
      */
     public function output($message)
     {
-        if ($this->quiet) {
+        if (!$this->verbose) {
             return;
         }
         if (Director::is_cli()) {
-            echo $message.PHP_EOL;
+            echo $message . PHP_EOL;
         } else {
-            echo Convert::raw2xml($message).'<br />'.PHP_EOL;
+            echo Convert::raw2xml($message) . '<br />' . PHP_EOL;
         }
     }
 }
