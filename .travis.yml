@@ -25,5 +25,7 @@ before_script:
  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
  - cd ~/builds/ss
 
-script: 
- - vendor/bin/phpunit crontask/tests
+script:
+ - ./vendor/bin/phpunit --coverage-clover=coverage.clover crontask/tests
+ - wget https://scrutinizer-ci.com/ocular.phar
+ - php ocular.phar code-coverage:upload --repository g/${TRAVIS_REPO_SLUG} --revision ${TRAVIS_COMMIT} --format=php-clover coverage.clover
