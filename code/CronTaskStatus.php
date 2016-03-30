@@ -9,17 +9,18 @@
  */
 class CronTaskStatus extends DataObject
 {
-    
+
     private static $db = array(
         'TaskClass' => 'Varchar(255)',
         'LastChecked' => 'SS_Datetime',
-        'LastRun' => 'SS_Datetime'
+        'LastRun' => 'SS_Datetime',
     );
 
     /**
      * Get the status
      *
      * @param string $class Name of class which implements CronTask
+     *
      * @return CronTaskStatus
      */
     public static function get_status($class)
@@ -34,6 +35,7 @@ class CronTaskStatus extends DataObject
      *
      * @param string $class Name of class which implements CronTask
      * @param bool $wasRun Flag indicating that the task was run this request
+     *
      * @return CronTaskStatus Status data object
      */
     public static function update_status($class, $wasRun)
