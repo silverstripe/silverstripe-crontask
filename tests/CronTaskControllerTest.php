@@ -50,8 +50,8 @@ class CronTaskControllerTest extends SapphireTest
      */
     public function testRunTask()
     {
+        /** @var CronTaskController $runner */
         $runner = CronTaskController::create();
-        $runner->setQuiet(true);
         $task = new CronTaskTest_TestCron();
 
         // Assuming first run, match the exact time (seconds are ignored)
