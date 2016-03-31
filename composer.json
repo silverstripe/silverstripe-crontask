@@ -12,7 +12,12 @@
 		{
 			"name": "The SilverStripe Community",
 			"homepage": "http://silverstripe.org"
-		}
+		},
+        {
+            "name": "Damian Mooyman",
+            "email": "damian@silverstripe.com",
+            "role": "Maintainer"
+        }
 	],
 	"require": {
 		 "mtdowling/cron-expression": "1.0.*",
