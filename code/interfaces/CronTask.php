@@ -1,4 +1,5 @@
 <?php
+
 /**
  * By implementing this interface a /dev/cron will be able to start in on the
  * expression that you return frmo getSchedule();
