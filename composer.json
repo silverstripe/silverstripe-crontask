@@ -20,7 +20,7 @@
         }
 	],
 	"require": {
-		 "mtdowling/cron-expression": "1.0.*",
+		 "mtdowling/cron-expression": "~1.0",
 		 "silverstripe/framework": "^4"
 	},
 	"extra": {
