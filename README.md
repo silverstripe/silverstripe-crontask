@@ -164,7 +164,7 @@ post from the creator of the 3rd party library.
 Contribute
 ----------
 
-Do you want to contribute? Great, please see the [CONTRIBUTING.md](CONTRIBUTING)
+Do you want to contribute? Great, please see the [CONTRIBUTING.md](CONTRIBUTING.md)
 guide.
 
 License
