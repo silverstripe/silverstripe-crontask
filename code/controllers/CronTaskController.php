@@ -127,10 +127,11 @@ class CronTaskController extends Controller
         if ($this->quiet) {
             return;
         }
+        $timestamp = DBDatetime::now()->Format('Y-m-d H:i:s');
         if (Director::is_cli()) {
-            echo $message . PHP_EOL;
+            echo $timestamp . ' - ' . $message . PHP_EOL;
         } else {
-            echo Convert::raw2xml($message) . '<br />' . PHP_EOL;
+            echo Convert::raw2xml($timestamp . ' - ' . $message) . '<br />' . PHP_EOL;
         }
     }
 }
