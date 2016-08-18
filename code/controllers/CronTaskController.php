@@ -1,5 +1,11 @@
 <?php
 
+use Cron\CronExpression;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
+use SilverStripe\ORM\FieldType\DBDatetime;
+
+
 /**
  * This is the controller that finds, checks and process all crontasks
  *
@@ -35,15 +41,6 @@ class CronTaskController extends Controller
     {
         parent::init();
 
-        // Try load the CronExpression from the default composer vendor dirs
-        if (!class_exists('Cron\CronExpression')) {
-            $ds = DIRECTORY_SEPARATOR;
-            require_once CRONTASK_MODULE_PATH . $ds . 'vendor' . $ds . 'autoload.php';
-            if (!class_exists('Cron\CronExpression')) {
-                throw new Exception('CronExpression library isn\'t loaded, please see crontask README');
-            }
-        }
-
         // Unless called from the command line, we need ADMIN privileges
         if (!Director::is_cli() && !Permission::check("ADMIN")) {
             Security::permissionFailure();
@@ -54,15 +51,15 @@ class CronTaskController extends Controller
      * Determine if a task should be run
      *
      * @param CronTask $task
-     * @param \Cron\CronExpression $cron
+     * @param CronExpression $cron
      */
-    public function isTaskDue(CronTask $task, \Cron\CronExpression $cron)
+    public function isTaskDue(CronTask $task, CronExpression $cron)
     {
         // Get last run status
         $status = CronTaskStatus::get_status(get_class($task));
 
         // If the cron is due immediately, then run it
-        $now = new DateTime(SS_Datetime::now()->getValue());
+        $now = new DateTime(DBDatetime::now()->getValue());
         if ($cron->isDue($now)) {
             if (empty($status) || empty($status->LastRun)) {
                 return true;
@@ -108,7 +105,7 @@ class CronTaskController extends Controller
      */
     public function runTask(CronTask $task)
     {
-        $cron = Cron\CronExpression::factory($task->getSchedule());
+        $cron = CronExpression::factory($task->getSchedule());
         $isDue = $this->isTaskDue($task, $cron);
         // Update status of this task prior to execution in case of interruption
         CronTaskStatus::update_status(get_class($task), $isDue);

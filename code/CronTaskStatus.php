@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
+
 /**
  * Record status of each cron task execution
  *
@@ -12,8 +15,8 @@ class CronTaskStatus extends DataObject
 
     private static $db = array(
         'TaskClass' => 'Varchar(255)',
-        'LastChecked' => 'SS_Datetime',
-        'LastRun' => 'SS_Datetime',
+        'LastChecked' => 'DBDatetime',
+        'LastRun' => 'DBDatetime',
     );
 
     /**
@@ -50,7 +53,7 @@ class CronTaskStatus extends DataObject
             $object->TaskClass = $class;
         }
         // Update fields
-        $now = SS_Datetime::now()->getValue();
+        $now = DBDatetime::now()->getValue();
         if ($wasRun) {
             $object->LastRun = $now;
         }
