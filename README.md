@@ -1,26 +1,37 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/?branch=master)
+[![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/?branch=master)
+[![Travis Build Status](https://travis-ci.org/silverstripe/silverstripe-crontask.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-crontask)
+
 SilverStripe CronTask
 ==========================
 
-This SilverStripe module provides developers the possibility to define tasks
-that can be triggered by cron jobs or other time based scripts.
+Gives developers an ability to configure cron-like tasks through the code.
+
+This module intentionally doesn't surface any of the configuration or logs
+to the CMS, being of an opinion these tasks belong with developers and sysadmins.
+If you want that, see the "CMS-driven scheduler" section below.
 
 What problem does module solve?
 -------------------------------
 
-Sometimes you as a developer don't have access to a server. If you want to run
-a task at a set time, you will have to tell an server administrator what to
-execute and when. This can often means that you will have to wait for someone to
-jump on to the server and set this up for you. If you then wants to add, change
-or remove tasks or times you will have to contact the administrators again.
+Developers don't always have access to the server to configure cronjobs,
+and instead they have to rely on server administrators to do it for them.
+This can slow down development cycles, and can lead to misunderstandings and
+misconfigurations if cronjobs are set up by hand.
 
-This modules aims are:
+This module solves this by getting the sysadmin to set up a single generic
+cronjob on the server side, and delegate the actual job definition to the
+PHP code.
 
- * Make the server configuration a one off job for administrators
- * Give developers full control on what tasks and when to run them
+CMS-driven scheduler
+-------------------------------
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/?branch=master)
-[![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/?branch=module-standard)
-[![Travis Build Status](https://travis-ci.org/silverstripe-labs/silverstripe-crontask.svg?branch=master)](https://travis-ci.org/silverstripe-labs/silverstripe-crontask)
+If you are looking for CMS-controllable scheduler, please check out
+the [queuedjobs module](https://github.com/silverstripe-australia/silverstripe-queuedjobs/).
+Here are some examples of how to implement recurring jobs with that module:
+
+* [GenerateGoogleSitemapJob](https://github.com/silverstripe-australia/silverstripe-queuedjobs/blob/570bae301c09d4c4367144be260a7213341a0020/code/jobs/GenerateGoogleSitemapJob.php#L184)
+* [LDAPMemberSyncJob](https://github.com/silverstripe/silverstripe-activedirectory/blob/master/code/jobs/LDAPMemberSyncJob.php#L52)
 
 Installing
 ----------
@@ -185,3 +196,4 @@ Thanks to [Michael Dowling](http://mtdowling.com/blog/2012/06/03/cron-expression
 for doing the actual job of parsing cron expressions.
 
 This module is just a thin wrapper around his code.
+
