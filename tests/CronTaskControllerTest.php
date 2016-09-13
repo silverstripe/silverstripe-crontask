@@ -3,6 +3,8 @@
 class CronTaskControllerTest extends SapphireTest
 {
 
+    protected $usesDatabase = true;
+
     public function setUp()
     {
         parent::setUp();
