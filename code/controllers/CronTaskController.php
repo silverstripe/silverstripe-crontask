@@ -4,6 +4,11 @@ use Cron\CronExpression;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Convert;
+
 
 
 /**

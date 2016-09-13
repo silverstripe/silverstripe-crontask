@@ -3,7 +3,7 @@
 use Cron\CronExpression;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
-class CronTaskControllerTest extends SapphireTest
+class CronTaskControllerTest extends SilverStripe\Dev\SapphireTest
 {
 
     protected $usesDatabase = true;
@@ -93,7 +93,7 @@ class CronTaskControllerTest extends SapphireTest
 }
 
 
-class CronTaskTest_TestCron implements TestOnly, CronTask
+class CronTaskTest_TestCron implements SilverStripe\Dev\TestOnly, CronTask
 {
 
     public static $times_run = 0;
