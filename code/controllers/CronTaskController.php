@@ -130,7 +130,7 @@ class CronTaskController extends Controller
         if ($this->quiet) {
             return;
         }
-        $timestamp = DBDatetime::now()->Format('Y-m-d H:i:s');
+        $timestamp = SS_Datetime::now()->Format('Y-m-d H:i:s');
         if (Director::is_cli()) {
             echo $timestamp . ' - ' . $message . PHP_EOL;
         } else {
