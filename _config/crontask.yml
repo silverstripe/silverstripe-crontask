@@ -1,6 +1,6 @@
 ---
 Name: crontask
 ---
-Director:
+SilverStripe\Control\Director:
   rules:
     'dev/cron/$Action': 'CronTaskController'

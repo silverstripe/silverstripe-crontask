@@ -8,6 +8,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Convert;
+use SilverStripe\Control\HTTPRequest;
 
 
 
@@ -89,7 +90,7 @@ class CronTaskController extends Controller
      *
      * @param SS_HTTPRequest $request
      */
-    public function index(SS_HTTPRequest $request)
+    public function index(HTTPRequest $request)
     {
         // Check each task
         $tasks = ClassInfo::implementorsOf('CronTask');
