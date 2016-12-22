@@ -24,11 +24,17 @@
 		 "silverstripe/framework": "^4"
 	},
 	"require-dev": {
-		"phpunit/PHPUnit": "~3.7@stable"
+		"phpunit/PHPUnit": "~4.8@stable"
 	},
 	"extra": {
 		"branch-alias": {
             "dev-master": "2.x-dev"
 		}
-	}
+	},
+    "autoload": {
+        "psr-4": {
+            "SilverStripe\\CronTask\\": "src/",
+            "SilverStripe\\CronTask\\Tests\\": "tests/"
+        }
+    }
 }

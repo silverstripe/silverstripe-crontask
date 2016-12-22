@@ -1,5 +1,7 @@
 <?php
 
+namespace SilverStripe\CronTask;
+
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
@@ -9,10 +11,15 @@ use SilverStripe\ORM\FieldType\DBDatetime;
  * @property string $LastChecked Date this task was last checked
  * @property string $LastRun Date this task was last run
  * @property string $TaskClass Class of this task
+ *
+ * @package crontask
  */
 class CronTaskStatus extends DataObject
 {
-
+    /**
+     * {@inheritDoc}
+     * @var array
+     */
     private static $db = array(
         'TaskClass' => 'Varchar(255)',
         'LastChecked' => 'DBDatetime',

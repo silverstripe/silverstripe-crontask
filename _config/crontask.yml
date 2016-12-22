@@ -3,4 +3,4 @@ Name: crontask
 ---
 SilverStripe\Control\Director:
   rules:
-    'dev/cron/$Action': 'CronTaskController'
+    'dev/cron/$Action': 'SilverStripe\CronTask\Controllers\CronTaskController'

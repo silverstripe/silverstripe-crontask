@@ -66,8 +66,8 @@ checks:
     argument_type_checks: true
 
 filter:
-  paths: [code/*, tests/*]
-  
+  paths: [src/*, tests/*]
+
 tools:
     php_code_sniffer:
       config:
