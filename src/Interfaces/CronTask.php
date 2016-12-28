@@ -1,13 +1,15 @@
 <?php
 
+namespace SilverStripe\CronTask\Interfaces;
+
 /**
  * By implementing this interface a /dev/cron will be able to start in on the
  * expression that you return frmo getSchedule();
  *
+ * @package crontask
  */
 interface CronTask
 {
-
     /**
      * Return a string for a CRON expression
      *

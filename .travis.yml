@@ -1,4 +1,4 @@
-# See https://github.com/silverstripe-labs/silverstripe-travis-support for setup details
+# See https://github.com/silverstripe/silverstripe-travis-support for setup details
 
 language: php
 
@@ -6,27 +6,29 @@ sudo: false
 
 php:
  - 5.5
+ - 5.6
+ - 7.0
 
 env:
-  global:
-    - CORE_RELEASE=master
-  matrix:
-    - DB=MYSQL
+  - DB=MYSQL CORE_RELEASE=4
 
 matrix:
   include:
     - php: 5.6
-      env: DB=MYSQL
+      env: DB=MYSQL CORE_RELEASE=4 COVERAGE=1
 
 before_script:
  - composer self-update || true
  - phpenv rehash
- - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
+ - git clone git://github.com/silverstripe/silverstripe-travis-support.git ~/travis-support
  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
  - cd ~/builds/ss
 
 script:
- - ./vendor/bin/phpunit --coverage-clover=coverage.clover crontask/tests
+  # Execute tests with no coverage
+  - "if [ \"$COVERAGE\" != \"1\" ]; then ./vendor/bin/phpunit crontask/tests/; fi"
+  # Execute tests with coverage.  Do this for a small
+  - "if [ \"$COVERAGE\" = \"1\" ]; then ./vendor/bin/phpunit --coverage-clover=coverage.clover crontask/tests/; fi"
 
 after_script:
  - wget https://scrutinizer-ci.com/ocular.phar

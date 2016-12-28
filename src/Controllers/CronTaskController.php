@@ -1,26 +1,29 @@
 <?php
 
+namespace SilverStripe\CronTask\Controllers;
+
 use Cron\CronExpression;
-use SilverStripe\Security\Permission;
-use SilverStripe\Security\Security;
-use SilverStripe\ORM\FieldType\DBDatetime;
+use DateTime;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Convert;
 use SilverStripe\Control\HTTPRequest;
-
-
+use SilverStripe\CronTask\CronTaskStatus;
+use SilverStripe\CronTask\Interfaces\CronTask;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
 
 /**
  * This is the controller that finds, checks and process all crontasks
  *
  * The default route to this controller is 'dev/cron'
  *
+ * @package crontask
  */
 class CronTaskController extends Controller
 {
-
     /**
      * If this controller is in quiet mode
      *
@@ -48,7 +51,7 @@ class CronTaskController extends Controller
         parent::init();
 
         // Unless called from the command line, we need ADMIN privileges
-        if (!Director::is_cli() && !Permission::check("ADMIN")) {
+        if (!Director::is_cli() && !Permission::check('ADMIN')) {
             Security::permissionFailure();
         }
     }
@@ -93,9 +96,9 @@ class CronTaskController extends Controller
     public function index(HTTPRequest $request)
     {
         // Check each task
-        $tasks = ClassInfo::implementorsOf('CronTask');
+        $tasks = ClassInfo::implementorsOf(CronTask::class);
         if (empty($tasks)) {
-            $this->output("There are no implementators of CronTask to run");
+            $this->output('There are no implementators of CronTask to run');
             return;
         }
         foreach ($tasks as $subclass) {
