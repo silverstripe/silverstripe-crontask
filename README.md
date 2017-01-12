@@ -109,12 +109,15 @@ The content of that file should be:
 This will run every minute as the www-data user and check if there are any
 outstanding tasks that needs to be executed.
 
-**Warning**: Observe that the crontask module doesn't to any checking. If 
+**Warning**: Observe that the crontask module doesn't do any checking. If 
 you define a task to run every 5 mins it will run every 5 minutes whether it 
 completed or not (as a normal cron would). If the run time of an 'every-5-minutes' 
-task started at 17:10 is more than five minutes, it might start another process 
-at 17:15 that interferes with the still running process. You can either make 
-the task run less often or use something like [sera](https://github.com/silverstripe-labs/sera).
+task started at 17:10 is more than five minutes, it starts another process 
+at 17:15 which may interfere with the still running process. You can either make 
+the task run less often or use something like 
+[queuedjobs](https://github.com/silverstripe-australia/silverstripe-queuedjobs), 
+which allows a job to re-schedule itself at a certain period after finishing 
+(see 'CMS-driven scheduler' above).
 
 For more information on how to debug and troubleshoot cronjobs, see
 [http://serverfault.com/a/449652](http://serverfault.com/a/449652).
