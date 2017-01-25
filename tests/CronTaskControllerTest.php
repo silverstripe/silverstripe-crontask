@@ -87,6 +87,21 @@ class CronTaskControllerTest extends SapphireTest
         $runner->runTask($task);
         $this->assertEquals(4, CronTaskTest_TestCron::$times_run);
     }
+
+    /**
+     * Tests setQuiet()
+     */
+    public function testQuietFlag()
+    {
+        $runner = CronTaskController::create();
+
+        $runner->setQuiet(true);
+        $this->assertTrue($runner->quiet);
+
+        $runner->setQuiet(false);
+        $this->assertFalse($runner->quiet);
+    }
+
 }
 
 

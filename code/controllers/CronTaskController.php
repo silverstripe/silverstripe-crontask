@@ -23,7 +23,7 @@ class CronTaskController extends Controller
      */
     public function setQuiet($quiet)
     {
-        $this->quiet = true;
+        $this->quiet = (bool) $quiet;
     }
 
     /**
