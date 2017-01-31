@@ -102,35 +102,27 @@ class CronTaskControllerTest extends FunctionalTest
         $this->assertFalse($runner->quiet);
     }
 
-    function testQuietArgument() {
-     $this->loginWithPermission('ADMIN');
-
-     // normal cron output includes the current date/time - we check for that
-     // cron uses its own output(), so the ss_httpresponse we get from $this->get() is blank
-     // so we use output buffering instead
-
-     // we expect a date in the output
-     ob_start();
-     $this->get('dev/cron');
-     $output = ob_get_contents();
-     ob_end_clean();
-     $this->assertContains(SS_Datetime::now()->Format('Y-m-d'), $output);
-
-     // same with quiet=1
-     ob_start();
-     $this->get('dev/cron?quiet=0');
-     $output = ob_get_contents();
-     ob_end_clean();
-     $this->assertContains(SS_Datetime::now()->Format('Y-m-d'), $output);
-
-     // with quiet=0 we expect no output
-     ob_start();
-     $this->get('dev/cron?quiet=1');
-     $output = ob_get_contents();
-     ob_end_clean();
-     $this->assertEquals('', $output);
-          
-  }
+    // normal cron output includes the current date/time - we check for that
+    // the exact output here could vary depending on what other modules are installed
+    function testDefaultQuietFlagOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
+        $this->get('dev/cron');
+    }
+    function testQuietFlagOffOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
+        $this->get('dev/cron?quiet=0');
+    }
+    // with the flag set we want no output
+    function testQuietFlagOnOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputString('');
+        $this->get('dev/cron?quiet=1');
+    }
     
 }
 
