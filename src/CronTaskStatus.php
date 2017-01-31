@@ -18,6 +18,11 @@ class CronTaskStatus extends DataObject
 {
     /**
      * {@inheritDoc}
+     */
+    private static $table_name = 'CronTaskStatus';
+
+    /**
+     * {@inheritDoc}
      * @var array
      */
     private static $db = array(
