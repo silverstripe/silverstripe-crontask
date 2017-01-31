@@ -1,6 +1,6 @@
 <?php
 
-class CronTaskControllerTest extends SapphireTest
+class CronTaskControllerTest extends FunctionalTest
 {
 
     protected $usesDatabase = true;
@@ -102,8 +102,29 @@ class CronTaskControllerTest extends SapphireTest
         $this->assertFalse($runner->quiet);
     }
 
+    // normal cron output includes the current date/time - we check for that
+    // the exact output here could vary depending on what other modules are installed
+    function testDefaultQuietFlagOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
+        $this->get('dev/cron');
+    }
+    function testQuietFlagOffOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
+        $this->get('dev/cron?quiet=0');
+    }
+    // with the flag set we want no output
+    function testQuietFlagOnOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputString('');
+        $this->get('dev/cron?quiet=1');
+    }
+    
 }
-
 
 class CronTaskTest_TestCron implements TestOnly, CronTask
 {

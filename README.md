@@ -109,6 +109,15 @@ The content of that file should be:
 This will run every minute as the www-data user and check if there are any
 outstanding tasks that needs to be executed.
 
+By default this will output information on which cron tasks are being executed -  
+if you are monitoring cron output for errors you can suppress this output by 
+adding quiet=1 - for example
+
+```
+MAILTO=admin@example.com
+* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/framework/cli-script.php dev/cron quiet=1
+```
+
 **Warning**: Observe that the crontask module doesn't do any checking. If 
 you define a task to run every 5 mins it will run every 5 minutes whether it 
 completed or not (as a normal cron would). If the run time of an 'every-5-minutes' 

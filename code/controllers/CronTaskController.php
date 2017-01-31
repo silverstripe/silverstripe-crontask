@@ -48,6 +48,9 @@ class CronTaskController extends Controller
         if (!Director::is_cli() && !Permission::check("ADMIN")) {
             Security::permissionFailure();
         }
+
+        // set quiet flag based on CLI parameter
+        $this->setQuiet( $this->getRequest()->getVar('quiet') );
     }
 
     /**
