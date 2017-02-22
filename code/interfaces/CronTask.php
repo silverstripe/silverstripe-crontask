@@ -20,4 +20,19 @@ interface CronTask {
 	 * @return void
 	 */
 	public function process();
+
+	/**
+	 * Checks whether this task should run or not.
+	 *
+	 * @return boolean
+	 */
+	public function canRunTask();
+
+	/**
+	 * Checks whether this task can be ran on demand, or whether it should always stick to the designated schedule.
+	 *
+	 * @return boolean
+	 */
+	public function enforceSchedule();
+
 }
