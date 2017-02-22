@@ -39,6 +39,31 @@ Implement the `CronTask` interface on a new or already existing class:
 		public function process() {
 			echo 'hello';
 		}
+		
+		/**
+		 * 
+		 * @return boolean
+		 */
+		public function canRunTask() {
+			if( ... ) {
+				return true;
+			} else {
+				return false;
+			}	
+		}
+		
+		/**
+		 * 
+		 * @return boolean
+		 */
+		public function enforceSchedule() {
+			if( ... ) {
+				return true;
+			} else {
+				return false;
+			}	
+		}
+		
 	}
 
 
@@ -69,6 +94,16 @@ The process method
 
 The process method might have some of the logic it in, or setup and execute 
 other more complicated background processes.
+
+The canRunTask method
+----------------------
+
+Logic that can prevent task from running altogether.
+
+The enforceSchedule method
+----------------------
+
+Choose whether the task's schedule should always be respected or whether the it can be ran on demand.
 
 
 Note
