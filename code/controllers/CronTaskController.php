@@ -99,7 +99,7 @@ class CronTaskController extends Controller
             return;
         }
         foreach ($tasks as $subclass) {
-            $task = new $subclass();
+            $task = Injector::inst()->create($subclass);
             $this->runTask($task);
         }
     }
