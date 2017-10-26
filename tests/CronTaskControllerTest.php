@@ -23,7 +23,7 @@ class CronTaskControllerTest extends SapphireTest
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         CronTaskTest\TestCron::$times_run = 0;

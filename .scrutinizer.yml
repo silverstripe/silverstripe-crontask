@@ -67,9 +67,3 @@ checks:
 
 filter:
   paths: [src/*, tests/*]
-
-tools:
-    php_code_sniffer:
-      config:
-        standard: "PSR2"
-    external_code_coverage: true
