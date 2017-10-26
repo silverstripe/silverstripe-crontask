@@ -1,6 +1,6 @@
 {
 	"name": "silverstripe/crontask",
-	"type": "silverstripe-module",
+	"type": "silverstripe-vendormodule",
 	"description": "Module for running tasks with a standard cron timeschedule",
 	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "cron"],
