@@ -1,9 +1,9 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/?branch=master)
-[![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/silverstripe-labs/silverstripe-crontask/?branch=master)
-[![Travis Build Status](https://travis-ci.org/silverstripe/silverstripe-crontask.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-crontask)
-
 SilverStripe CronTask
 ==========================
+
+[![Build Status](http://img.shields.io/travis/silverstripe/silverstripe-crontask.svg?style=flat)](https://travis-ci.org/silverstripe/silverstripe-crontask)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-crontask/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-crontask/?branch=master)
+[![codecov](https://codecov.io/gh/silverstripe/silverstripe-crontask/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-crontask)
 
 Gives developers an ability to configure cron-like tasks through the code.
 
