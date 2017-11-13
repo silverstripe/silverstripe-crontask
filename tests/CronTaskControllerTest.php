@@ -88,19 +88,6 @@ class CronTaskControllerTest extends FunctionalTest
         $this->assertEquals(4, CronTaskTest_TestCron::$times_run);
     }
 
-    /**
-     * Tests setQuiet()
-     */
-    public function testQuietFlag()
-    {
-        $runner = CronTaskController::create();
-
-        $runner->setQuiet(true);
-        $this->assertTrue($runner->quiet);
-
-        $runner->setQuiet(false);
-        $this->assertFalse($runner->quiet);
-    }
 
     // normal cron output includes the current date/time - we check for that
     // the exact output here could vary depending on what other modules are installed
@@ -108,13 +95,7 @@ class CronTaskControllerTest extends FunctionalTest
     {
         $this->loginWithPermission('ADMIN');
         $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
-        $this->get('dev/cron');
-    }
-    function testQuietFlagOffOutput()
-    {
-        $this->loginWithPermission('ADMIN');
-        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
-        $this->get('dev/cron?quiet=0');
+        $this->get('dev/cron?debug=1');
     }
     // with the flag set we want no output
     function testQuietFlagOnOutput()
@@ -123,7 +104,7 @@ class CronTaskControllerTest extends FunctionalTest
         $this->expectOutputString('');
         $this->get('dev/cron?quiet=1');
     }
-    
+
 }
 
 class CronTaskTest_TestCron implements TestOnly, CronTask

@@ -10,20 +10,32 @@ class CronTaskController extends Controller
 {
 
     /**
-     * If this controller is in quiet mode
+     * Tell the controller how noisy it may be
      *
-     * @var bool
+     * @var int A number from 0 to 2
      */
-    protected $quiet = false;
+    protected $verbosity = 1;
 
     /**
      * Tell the controller how noisy it may be
-     *
+     * @deprecated Use setVerbosity instead
      * @param bool $quiet If set to true this controller will not emit debug noise
      */
     public function setQuiet($quiet)
     {
+        $this->setVerbosity($quiet ? 0 : 1);
+
         $this->quiet = (bool) $quiet;
+    }
+
+    /**
+     * Tell the controller how noisy it may be
+     *
+     * @param int $verbosity An integer from 0 to 2. 0 = no output, 1 = normal, 2 = debug
+     */
+    public function setVerbosity($verbosity)
+    {
+        $this->verbosity = (int) $verbosity;
     }
 
     /**
@@ -50,7 +62,13 @@ class CronTaskController extends Controller
         }
 
         // set quiet flag based on CLI parameter
-        $this->setQuiet( $this->getRequest()->getVar('quiet') );
+        if ($this->getRequest()->getVar('quiet')) {
+            $this->setVerbosity(0);
+        }
+        if ($this->getRequest()->getVar('debug')) {
+            $this->setVerbosity(2);
+        }
+
     }
 
     /**
@@ -92,15 +110,18 @@ class CronTaskController extends Controller
      */
     public function index(SS_HTTPRequest $request)
     {
+        // Show more debug info with ?debug=1
+        $isDebug = (bool)$request->getVar('debug');
+
         // Check each task
         $tasks = ClassInfo::implementorsOf('CronTask');
         if (empty($tasks)) {
-            $this->output("There are no implementators of CronTask to run");
+            $this->output("There are no implementators of CronTask to run", 2);
             return;
         }
         foreach ($tasks as $subclass) {
             $task = Injector::inst()->create($subclass);
-            $this->runTask($task);
+            $this->runTask($task, $isDebug);
         }
     }
 
@@ -119,7 +140,7 @@ class CronTaskController extends Controller
             $this->output(get_class($task) . ' will start now.');
             $task->process();
         } else {
-            $this->output(get_class($task) . ' will run at ' . $cron->getNextRunDate()->format('Y-m-d H:i:s') . '.');
+            $this->output(get_class($task) . ' will run at ' . $cron->getNextRunDate()->format('Y-m-d H:i:s') . '.', 2);
         }
     }
 
@@ -128,9 +149,9 @@ class CronTaskController extends Controller
      *
      * @param string $message
      */
-    public function output($message)
+    public function output($message, $minVerbosity = 1)
     {
-        if ($this->quiet) {
+        if ($this->verbosity < $minVerbosity) {
             return;
         }
         $timestamp = SS_Datetime::now()->Format('Y-m-d H:i:s');
