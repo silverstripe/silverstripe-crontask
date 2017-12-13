@@ -1,6 +1,13 @@
 ---
 Name: crontask
 ---
+SilverStripe\Dev\DevelopmentAdmin:
+  registered_controllers:
+    cron:
+      controller: SilverStripe\CronTask\Controllers\CronTaskController
+      links:
+        cron: 'Run registered SilverStripe cron tasks'
+
 SilverStripe\Control\Director:
   rules:
-    'dev/cron/$Action': 'SilverStripe\CronTask\Controllers\CronTaskController'
+    'dev/cron/$Action': SilverStripe\CronTask\Controllers\CronTaskController
