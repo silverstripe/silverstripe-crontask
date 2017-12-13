@@ -27,22 +27,24 @@ CMS-driven scheduler
 -------------------------------
 
 If you are looking for CMS-controllable scheduler, please check out
-the [queuedjobs module](https://github.com/silverstripe-australia/silverstripe-queuedjobs/).
+the [queuedjobs module](https://github.com/symbiote/silverstripe-queuedjobs/).
 Here are some examples of how to implement recurring jobs with that module:
 
-* [GenerateGoogleSitemapJob](https://github.com/silverstripe-australia/silverstripe-queuedjobs/blob/570bae301c09d4c4367144be260a7213341a0020/code/jobs/GenerateGoogleSitemapJob.php#L184)
-* [LDAPMemberSyncJob](https://github.com/silverstripe/silverstripe-activedirectory/blob/master/code/jobs/LDAPMemberSyncJob.php#L52)
+* [GenerateGoogleSitemapJob](https://github.com/symbiote/silverstripe-queuedjobs/blob/570bae301c09d4c4367144be260a7213341a0020/code/jobs/GenerateGoogleSitemapJob.php#L184)
+* [LDAPMemberSyncJob](https://github.com/silverstripe/silverstripe-ldap/blob/2857c2d7ff34c2b0ca9fdd43ed657799d2224631/src/Jobs/LDAPMemberSyncJob.php#L88)
 
 Installing
 ----------
 
 Add the following to your project's composer.json:
 
-	{
-		"require": {
-			"silverstripe/crontask": "*"
-		}
-	}
+```json
+{
+    "require": {
+        "silverstripe/crontask": "^2.0"
+    }
+}
+```
 
 Run `composer update` (this will also install needed 3rd party libs in ./vendor)
 
@@ -51,33 +53,41 @@ Usage
 
 Implement the `CronTask` interface on a new or already existing class:
 
-	class TestCron implements CronTask {
+```php
+use SilverStripe\CronTask\Interfaces\CronTask;
 
-		/**
-		 * run this task every 5 minutes
-		 *
-		 * @return string
-		 */
-		public function getSchedule() {
-			return "*/5 * * * *";
-		}
+class TestCron implements CronTask
+{
+    /**
+     * run this task every 5 minutes
+     *
+     * @return string
+     */
+    public function getSchedule()
+    {
+        return "*/5 * * * *";
+    }
 
-		/**
-		 *
-		 * @return void
-		 */
-		public function process() {
-			echo 'hello';
-		}
-	}
+    /**
+     *
+     * @return void
+     */
+    public function process()
+    {
+        echo 'hello';
+    }
+}
+```
 
-Run `./framework/sake dev/build flush=1` to make SilverStripe aware of the new
+Run `vendor/bin/sake dev/build flush=1` to make SilverStripe aware of the new
 module.
 
 Then execute the crontask controller, it's preferable you do this via the CLI
 since that is how the server will execute it.
 
-	./framework/sake dev/cron
+```
+vendor/bin/sake dev/cron
+```
 
 Server configuration
 --------------------
@@ -89,7 +99,7 @@ most common way is by adding a file to the `/etc/cron.d/` directory.
 First find the correct command to execute, for example:
 
 ```
-/usr/bin/php /path/to/silverstripe/docroot/framework/cli-script.php dev/cron
+/usr/bin/php /path/to/silverstripe/docroot/vendor/silverstripe/framework/cli-script.php dev/cron
 ```
 
 Then find out which user the webserver is running on, for example `www-data`.
@@ -103,7 +113,7 @@ sudo vim /etc/cron.d/silverstripe-crontask
 The content of that file should be:
 
 ```
-* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/framework/cli-script.php dev/cron
+* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/vendor/silverstripe/framework/cli-script.php dev/cron
 ```
 
 This will run every minute as the www-data user and check if there are any
@@ -133,8 +143,9 @@ Some examples:
 
 Example:
 
-```
-public function getSchedule() {
+```php
+public function getSchedule()
+{
     return "0 1 * * *";
 }
 ```
@@ -146,8 +157,9 @@ The `process` method will be executed only when it's time for a task to run
 (according to the getSchedule method). What you do in here is up to you. You can
 either do work in here or for example execute BuildTasks run() methods.
 
-```
-public function process() {
+```php
+public function process()
+{
     $task = FilesystemSyncTask::create();
     $task->run(null);
 }
@@ -158,15 +170,17 @@ CRON Expressions
 
 A CRON expression is a string representing the schedule for a particular command to execute.  The parts of a CRON schedule are as follows:
 
-    *    *    *    *    *    *
-    -    -    -    -    -    -
-    |    |    |    |    |    |
-    |    |    |    |    |    + year [optional]
-    |    |    |    |    +----- day of week (0 - 7) (Sunday=0 or 7)
-    |    |    |    +---------- month (1 - 12)
-    |    |    +--------------- day of month (1 - 31)
-    |    +-------------------- hour (0 - 23)
-    +------------------------- min (0 - 59)
+```
+*    *    *    *    *    *
+-    -    -    -    -    -
+|    |    |    |    |    |
+|    |    |    |    |    + year [optional]
+|    |    |    |    +----- day of week (0 - 7) (Sunday=0 or 7)
+|    |    |    +---------- month (1 - 12)
+|    |    +--------------- day of month (1 - 31)
+|    +-------------------- hour (0 - 23)
++------------------------- min (0 - 59)
+```
 
 For more information about what cron expression is allowed, see the
 [Cron-Expression](http://mtdowling.com/blog/2012/06/03/cron-expressions-in-php/)

@@ -4,11 +4,13 @@ namespace SilverStripe\CronTask\Controllers;
 
 use Cron\CronExpression;
 use DateTime;
+use Exception;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Convert;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\CronTask\CronTaskStatus;
 use SilverStripe\CronTask\Interfaces\CronTask;
 use SilverStripe\ORM\FieldType\DBDatetime;
@@ -98,11 +100,11 @@ class CronTaskController extends Controller
         // Check each task
         $tasks = ClassInfo::implementorsOf(CronTask::class);
         if (empty($tasks)) {
-            $this->output('There are no implementators of CronTask to run');
+            $this->output('There are no implementors of CronTask to run');
             return;
         }
         foreach ($tasks as $subclass) {
-            $task = new $subclass();
+            $task = Injector::inst()->create($subclass);
             $this->runTask($task);
         }
     }
