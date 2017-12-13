@@ -99,7 +99,7 @@ most common way is by adding a file to the `/etc/cron.d/` directory.
 First find the correct command to execute, for example:
 
 ```
-/usr/bin/php /path/to/silverstripe/docroot/vendor/silverstripe/framework/cli-script.php dev/cron
+/usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake dev/cron
 ```
 
 Then find out which user the webserver is running on, for example `www-data`.
@@ -113,7 +113,7 @@ sudo vim /etc/cron.d/silverstripe-crontask
 The content of that file should be:
 
 ```
-* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/vendor/silverstripe/framework/cli-script.php dev/cron
+* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake dev/cron
 ```
 
 This will run every minute as the www-data user and check if there are any
