@@ -7,12 +7,12 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\CronTask\Controllers\CronTaskController;
 use SilverStripe\CronTask\CronTaskStatus;
 use SilverStripe\CronTask\Controllers\CronTask;
-use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Dev\FunctionalTest;
 
 /**
  * @package crontask
  */
-class CronTaskControllerTest extends SapphireTest
+class CronTaskControllerTest extends FunctionalTest
 {
     /**
      * {@inheritDoc}
@@ -105,4 +105,23 @@ class CronTaskControllerTest extends SapphireTest
         $runner->runTask($task);
         $this->assertEquals(4, CronTaskTest\TestCron::$times_run);
     }
+
+
+    // normal cron output includes the current date/time - we check for that
+    // the exact output here could vary depending on what other modules are installed
+    public function testDefaultQuietFlagOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
+        $this->get('dev/cron?debug=1');
+    }
+
+    // with the flag set we want no output
+    public function testQuietFlagOnOutput()
+    {
+        $this->loginWithPermission('ADMIN');
+        $this->expectOutputString('');
+        $this->get('dev/cron?quiet=1');
+    }
+
 }

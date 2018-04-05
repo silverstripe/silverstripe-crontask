@@ -119,10 +119,24 @@ The content of that file should be:
 This will run every minute as the www-data user and check if there are any
 outstanding tasks that needs to be executed.
 
-**Warning**: Observe that the crontask module doesn't to any scheduling. If the
-run time is more than one minute, it might start another process that interferes
-with the still running process. You can either trigger the `dev/cron` task less
-often or use something like [sera](https://github.com/silverstripe-labs/sera).
+By default this will output information on which cron tasks are being executed -  
+if you are monitoring cron output for errors you can suppress this output by 
+adding quiet=1 - for example
+
+```
+MAILTO=admin@example.com
+* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/framework/cli-script.php dev/cron quiet=1
+```
+
+**Warning**: Observe that the crontask module doesn't do any checking. If 
+you define a task to run every 5 mins it will run every 5 minutes whether it 
+completed or not (as a normal cron would). If the run time of an 'every-5-minutes' 
+task started at 17:10 is more than five minutes, it starts another process 
+at 17:15 which may interfere with the still running process. You can either make 
+the task run less often or use something like 
+[queuedjobs](https://github.com/silverstripe-australia/silverstripe-queuedjobs), 
+which allows a job to re-schedule itself at a certain period after finishing 
+(see 'CMS-driven scheduler' above).
 
 For more information on how to debug and troubleshoot cronjobs, see
 [http://serverfault.com/a/449652](http://serverfault.com/a/449652).
