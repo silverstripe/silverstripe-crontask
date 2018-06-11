@@ -1,37 +1,36 @@
 {
-	"name": "silverstripe/crontask",
-	"type": "silverstripe-vendormodule",
-	"description": "Module for running tasks with a standard cron timeschedule",
-	"license": "BSD-3-Clause",
-	"keywords": ["silverstripe", "cron"],
-	"authors": [
-		{
-			"name": "SilverStripe",
-			"homepage": "http://silverstripe.com"
-		},
-		{
-			"name": "The SilverStripe Community",
-			"homepage": "http://silverstripe.org"
-		},
+    "name": "silverstripe/crontask",
+    "type": "silverstripe-vendormodule",
+    "description": "Module for running tasks with a standard cron timeschedule",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "silverstripe",
+        "cron"
+    ],
+    "authors": [
+        {
+            "name": "SilverStripe",
+            "homepage": "http://silverstripe.com"
+        },
+        {
+            "name": "The SilverStripe Community",
+            "homepage": "http://silverstripe.org"
+        },
         {
             "name": "Damian Mooyman",
             "email": "damian@silverstripe.com",
             "role": "Maintainer"
         }
-	],
-	"require": {
-		 "mtdowling/cron-expression": "~1.0",
-		 "silverstripe/framework": "^4"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "^5.7",
+    ],
+    "require": {
+        "mtdowling/cron-expression": "~1.0",
+        "silverstripe/framework": "^4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7",
         "squizlabs/php_codesniffer": "^3.0"
-	},
-	"extra": {
-		"branch-alias": {
-            "dev-master": "2.x-dev"
-		}
-	},
+    },
+    "extra": [],
     "autoload": {
         "psr-4": {
             "SilverStripe\\CronTask\\": "src/",
