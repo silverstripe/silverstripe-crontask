@@ -3,11 +3,11 @@
 namespace SilverStripe\CronTask\Tests;
 
 use Cron\CronExpression;
-use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\CronTask\Controllers\CronTask;
 use SilverStripe\CronTask\Controllers\CronTaskController;
 use SilverStripe\CronTask\CronTaskStatus;
-use SilverStripe\CronTask\Controllers\CronTask;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\ORM\FieldType\DBDatetime;
 
 /**
  * @package crontask
@@ -112,7 +112,7 @@ class CronTaskControllerTest extends FunctionalTest
     public function testDefaultQuietFlagOutput()
     {
         $this->loginWithPermission('ADMIN');
-        $this->expectOutputRegex('#'.SS_Datetime::now()->Format('Y-m-d').'#');
+        $this->expectOutputRegex('#' . DBDatetime::now()->Format('Y-m-d') . '#');
         $this->get('dev/cron?debug=1');
     }
 
