@@ -84,7 +84,6 @@ class CronTaskController extends Controller
         if ($this->getRequest()->getVar('debug')) {
             $this->setVerbosity(2);
         }
-
     }
 
     /**

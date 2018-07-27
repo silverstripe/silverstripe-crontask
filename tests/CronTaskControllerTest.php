@@ -123,5 +123,4 @@ class CronTaskControllerTest extends FunctionalTest
         $this->expectOutputString('');
         $this->get('dev/cron?quiet=1');
     }
-
 }
