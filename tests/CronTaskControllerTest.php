@@ -7,6 +7,7 @@ use SilverStripe\CronTask\Controllers\CronTask;
 use SilverStripe\CronTask\Controllers\CronTaskController;
 use SilverStripe\CronTask\CronTaskStatus;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
 /**
@@ -112,7 +113,7 @@ class CronTaskControllerTest extends FunctionalTest
     public function testDefaultQuietFlagOutput()
     {
         $this->loginWithPermission('ADMIN');
-        $this->expectOutputRegex('#' . DBDatetime::now()->Format('Y-m-d') . '#');
+        $this->expectOutputRegex('#' . DBDatetime::now()->Format(DBDate::ISO_DATE) . '#');
         $this->get('dev/cron?debug=1');
     }
 
