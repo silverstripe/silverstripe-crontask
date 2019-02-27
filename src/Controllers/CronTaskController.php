@@ -84,7 +84,6 @@ class CronTaskController extends Controller
         if ($this->getRequest()->getVar('debug')) {
             $this->setVerbosity(2);
         }
-
     }
 
     /**
@@ -170,7 +169,7 @@ class CronTaskController extends Controller
         if ($this->verbosity < $minVerbosity) {
             return;
         }
-        $timestamp = DBDatetime::now()->Format('Y-m-d H:i:s');
+        $timestamp = DBDatetime::now()->Rfc2822();
         if (Director::is_cli()) {
             echo $timestamp . ' - ' . $message . PHP_EOL;
         } else {
