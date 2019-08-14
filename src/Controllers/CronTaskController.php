@@ -136,7 +136,10 @@ class CronTaskController extends Controller
         }
         foreach ($tasks as $subclass) {
             $task = Injector::inst()->create($subclass);
-            $this->runTask($task, $isDebug);
+            // falsey schedule = don't run task
+            if ($task->getSchedule()) {
+                $this->runTask($task, $isDebug);
+            }
         }
     }
 

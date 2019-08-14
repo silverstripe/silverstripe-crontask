@@ -11,7 +11,8 @@ namespace SilverStripe\CronTask\Interfaces;
 interface CronTask
 {
     /**
-     * Return a string for a CRON expression
+     * Return a string for a CRON expression. If a "falsy" value is returned, the CronTaskController will assume the
+     * CronTask is disabled.
      *
      * @return string
      */
