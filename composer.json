@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "mtdowling/cron-expression": "~1.0",
+        "dragonmantank/cron-expression": "^3",
         "silverstripe/framework": "^4"
     },
     "require-dev": {
