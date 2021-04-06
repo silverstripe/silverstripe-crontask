@@ -23,8 +23,9 @@
         }
     ],
     "require": {
-        "mtdowling/cron-expression": "~1.0",
-        "silverstripe/framework": "^4"
+        "dragonmantank/cron-expression": "^3",
+        "silverstripe/framework": "^4",
+        "php": "^7.1 || 8"
     },
     "require-dev": {
         "sminnee/phpunit": "^5.7",
