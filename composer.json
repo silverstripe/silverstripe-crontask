@@ -24,11 +24,11 @@
     ],
     "require": {
         "dragonmantank/cron-expression": "^3",
-        "silverstripe/framework": "^4",
-        "php": "^7.1 || ^8"
+        "silverstripe/framework": "^4.10",
+        "php": "^7.3 || ^8"
     },
     "require-dev": {
-        "sminnee/phpunit": "^5.7",
+        "phpunit/phpunit": "^9.5",
         "squizlabs/php_codesniffer": "^3.0"
     },
     "extra": {
