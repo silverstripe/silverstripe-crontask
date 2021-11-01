@@ -24,7 +24,7 @@ class CronTaskControllerTest extends FunctionalTest
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         CronTaskTest\TestCron::$times_run = 0;
