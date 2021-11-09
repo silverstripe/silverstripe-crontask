@@ -13,6 +13,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\CronTask\CronTaskStatus;
 use SilverStripe\CronTask\Interfaces\CronTask;
+use SilverStripe\CronTask\Interfaces\QueuedCronTask;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
@@ -129,18 +130,33 @@ class CronTaskController extends Controller
         $isDebug = (bool)$request->getVar('debug');
 
         // Check each task
-        $tasks = ClassInfo::implementorsOf(CronTask::class);
+        $tasks = array_merge(
+            ClassInfo::implementorsOf(CronTask::class),
+            ClassInfo::implementorsOf(QueuedCronTask::class),
+        );
         if (empty($tasks)) {
             $this->output("There are no implementators of CronTask to run", 2);
             return;
         }
+
+        $jobs = [];
         foreach ($tasks as $subclass) {
-            $task = Injector::inst()->create($subclass);
+            $jobs[] = Injector::inst()->create($subclass);
+        }
+
+        usort($jobs, function ($a, $b) {
+            $priorityA = method_exists($a, 'priority') ? $a->priority() : 0;
+            $priorityB = method_exists($b, 'priority') ? $b->priority() : 0;
+            return $priorityA > $priorityB ? -1 : 1;
+        });
+
+        foreach ($jobs as $job) {
             // falsey schedule = don't run task
-            if ($task->getSchedule()) {
-                $this->runTask($task, $isDebug);
+            if ($job->getSchedule()) {
+                $this->runTask($job, $isDebug);
             }
         }
+
     }
 
     /**
