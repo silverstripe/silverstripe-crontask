@@ -31,11 +31,7 @@
         "phpunit/phpunit": "^9.5",
         "squizlabs/php_codesniffer": "^3.0"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.x-dev"
-        }
-    },
+    "extra": [],
     "autoload": {
         "psr-4": {
             "SilverStripe\\CronTask\\": "src/",
