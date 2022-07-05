@@ -1,7 +1,7 @@
 SilverStripe CronTask
 ==========================
 
-[![Build Status](https://api.travis-ci.com/silverstripe/silverstripe-crontask.svg?branch=2)](https://travis-ci.com/silverstripe/silverstripe-crontask)
+[![CI](https://github.com/silverstripe/silverstripe-crontask/actions/workflows/ci.yml/badge.svg)](https://github.com/silverstripe/silverstripe-crontask/actions/workflows/ci.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-crontask/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-crontask/?branch=master)
 [![codecov](https://codecov.io/gh/silverstripe/silverstripe-crontask/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-crontask)
 
