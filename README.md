@@ -1,9 +1,7 @@
-SilverStripe CronTask
-==========================
+# Silverstripe CronTask
 
 [![CI](https://github.com/silverstripe/silverstripe-crontask/actions/workflows/ci.yml/badge.svg)](https://github.com/silverstripe/silverstripe-crontask/actions/workflows/ci.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-crontask/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-crontask/?branch=master)
-[![codecov](https://codecov.io/gh/silverstripe/silverstripe-crontask/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-crontask)
+[![Silverstripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
 
 Gives developers an ability to configure cron-like tasks through the code.
 
@@ -79,7 +77,7 @@ class TestCron implements CronTask
 }
 ```
 
-Run `vendor/bin/sake dev/build flush=1` to make SilverStripe aware of the new
+Run `vendor/bin/sake dev/build flush=1` to make Silverstripe aware of the new
 module.
 
 Then execute the crontask controller, it's preferable you do this via the CLI
@@ -188,7 +186,6 @@ public function getSchedule()
 }
 ```
 
-
 The process() method
 ----------------------
 
@@ -240,7 +237,7 @@ Code of conduct
 ---------------
 
 When having discussions about this module in issues or pull request please
-adhere to the [SilverStripe Community Code of Conduct](https://docs.silverstripe.org/en/contributing/code_of_conduct).
+adhere to the [Silverstripe Community Code of Conduct](https://docs.silverstripe.org/en/contributing/code_of_conduct).
 
 Thanks
 ------
