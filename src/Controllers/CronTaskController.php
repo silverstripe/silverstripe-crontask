@@ -2,6 +2,7 @@
 
 namespace SilverStripe\CronTask\Controllers;
 
+use SilverStripe\Dev\Deprecation;
 use Cron\CronExpression;
 use DateTime;
 use Exception;
@@ -28,7 +29,7 @@ class CronTaskController extends Controller
     /**
      * If this controller is in quiet mode
      *
-     * @deprecated Use $verbosity instead
+     * @deprecated 2.5.0 Use $verbosity instead
      *
      * @var bool
      */
@@ -43,11 +44,12 @@ class CronTaskController extends Controller
 
     /**
      * Tell the controller how noisy it may be
-     * @deprecated Use setVerbosity instead
+     * @deprecated 2.5.0 Use setVerbosity() instead
      * @param bool $quiet If set to true this controller will not emit debug noise
      */
     public function setQuiet($quiet)
     {
+        Deprecation::notice('2.5.0', 'Use setVerbosity() instead');
         $this->setVerbosity($quiet ? 0 : 1);
 
         $this->quiet = (bool) $quiet;
