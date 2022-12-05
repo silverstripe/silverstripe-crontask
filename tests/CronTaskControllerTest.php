@@ -72,7 +72,7 @@ class CronTaskControllerTest extends FunctionalTest
     public function testRunTask()
     {
         $runner = CronTaskController::create();
-        $runner->setQuiet(true);
+        $runner->setVerbosity(0);
         $task = new CronTaskTest\TestCron();
 
         // Assuming first run, match the exact time (seconds are ignored)
