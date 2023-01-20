@@ -1,6 +1,0 @@
----
-Name: crontasklegacy
----
-SilverStripe\ORM\DatabaseAdmin:
-  classname_value_remapping:
-    CronTaskStatus: SilverStripe\CronTask\CronTaskStatus
