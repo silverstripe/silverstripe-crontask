@@ -1,6 +1,0 @@
-mappings:
-  CronTask: SilverStripe\CronTask\Interfaces\CronTask
-  CronTaskController: SilverStripe\CronTask\Controllers\CronTaskController
-  CronTaskStatus: SilverStripe\CronTask\CronTaskStatus
-  CronTaskControllerTest: SilverStripe\CronTask\Tests\CronTaskControllerTest
-  CronTaskTest_TestCron: SilverStripe\CronTask\Tests\CronTaskTest\TestCron
