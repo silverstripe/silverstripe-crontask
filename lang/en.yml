@@ -1,0 +1,7 @@
+en:
+  SilverStripe\CronTask\CronTaskStatus:
+    PLURALNAME: 'Cron Task Statuss'
+    PLURALS:
+      one: 'A Cron Task Status'
+      other: '{count} Cron Task Statuss'
+    SINGULARNAME: 'Cron Task Status'
