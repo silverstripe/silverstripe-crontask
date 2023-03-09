@@ -133,7 +133,7 @@ class CronTaskController extends Controller
         // Check each task
         $tasks = ClassInfo::implementorsOf(CronTask::class);
         if (empty($tasks)) {
-            $this->output("There are no implementators of CronTask to run", 2);
+            $this->output(_t(self::class . '.NO_IMPLEMENTERS', 'There are no implementators of CronTask to run'), 2);
             return;
         }
         foreach ($tasks as $subclass) {
@@ -157,10 +157,17 @@ class CronTaskController extends Controller
         // Update status of this task prior to execution in case of interruption
         CronTaskStatus::update_status(get_class($task), $isDue);
         if ($isDue) {
-            $this->output(get_class($task) . ' will start now.');
+            $this->output(_t(self::class . '.WILL_START_NOW', '{task} will start now.', ['task' => get_class($task)]));
             $task->process();
         } else {
-            $this->output(get_class($task) . ' will run at ' . $cron->getNextRunDate()->format('Y-m-d H:i:s') . '.', 2);
+            $this->output(
+                _t(
+                    self::class . '.WILL_RUN_AT',
+                    '{task} will run at {time}.',
+                    ['task' => get_class($task), 'time' => $cron->getNextRunDate()->format('Y-m-d H:i:s')]
+                ),
+                2
+            );
         }
     }
 

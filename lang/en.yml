@@ -1,0 +1,18 @@
+en:
+  SilverStripe\CronTask\Controllers\CronTaskController:
+    NO_IMPLEMENTERS: 'There are no implementators of CronTask to run'
+    WILL_RUN_AT: '{task} will  run at {time}.'
+    WILL_START_NOW: '{task} will start now.'
+  SilverStripe\CronTask\CronTaskController:
+    NO_IMPLEMENTERS: 'There are no implementators of CronTask to run'
+    WILL_RUN_AT: '{task} will run at {time}.'
+    WILL_START_NOW: '{task} will start now.'
+  SilverStripe\CronTask\CronTaskStatus:
+    PLURALNAME: 'Cron Task Statuss'
+    PLURALS:
+      one: 'A Cron Task Status'
+      other: '{count} Cron Task Statuss'
+    SINGULARNAME: 'Cron Task Status'
+    db_LastChecked: 'Last checked'
+    db_LastRun: 'Last run'
+    db_TaskClass: 'Task class'

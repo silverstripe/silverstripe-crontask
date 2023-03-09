@@ -1,0 +1,10 @@
+[main]
+host = https://www.transifex.com
+
+[o:silverstripe:p:silverstripe-crontask:r:master]
+file_filter = lang/<lang>.yml
+source_file = lang/en.yml
+source_lang = en
+type        = YML
+
+
