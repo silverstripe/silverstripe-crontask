@@ -24,7 +24,7 @@
     ],
     "require": {
         "dragonmantank/cron-expression": "^3",
-        "silverstripe/framework": "^4.10",
+        "silverstripe/framework": "4.13.x-dev",
         "php": "^7.4 || ^8"
     },
     "require-dev": {
