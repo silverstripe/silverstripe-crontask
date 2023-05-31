@@ -1,0 +1,18 @@
+eo:
+  SilverStripe\CronTask\Controllers\CronTaskController:
+    NO_IMPLEMENTERS: 'Mankas rulotaj realigiloj de CronTask'
+    WILL_RUN_AT: '{task} ruliĝos je {time}.'
+    WILL_START_NOW: '{task} ruliĝos nun.'
+  SilverStripe\CronTask\CronTaskController:
+    NO_IMPLEMENTERS: 'Mankas rulotaj realigiloj de CronTask'
+    WILL_RUN_AT: '{task} ruliĝos je {time}.'
+    WILL_START_NOW: '{task} ruliĝos nun.'
+  SilverStripe\CronTask\CronTaskStatus:
+    PLURALNAME: 'Statoj de Cron-tasko'
+    PLURALS:
+      one: 'Unu stato de Cron-taskoj'
+      other: '{count} statoj de Cron-taskoj'
+    SINGULARNAME: 'Stato de Cron-tasko'
+    db_LastChecked: 'Lastfoje kontrolita'
+    db_LastRun: 'Lastfoje rulita'
+    db_TaskClass: 'Klaso de tasko'
