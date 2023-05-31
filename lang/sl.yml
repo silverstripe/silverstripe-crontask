@@ -1,0 +1,20 @@
+sl:
+  SilverStripe\CronTask\Controllers\CronTaskController:
+    NO_IMPLEMENTERS: 'Ni izvajalcev, ki bi lahko izvedli predvidena opravila.'
+    WILL_RUN_AT: 'Opravilo "{task}" bo izvedeno ob {time}.'
+    WILL_START_NOW: 'Opravilo "{task}" bo ravnokar izvedeno.'
+  SilverStripe\CronTask\CronTaskController:
+    NO_IMPLEMENTERS: 'Ni izvajalcev, ki bi lahko izvedli predvidena opravila.'
+    WILL_RUN_AT: 'Opravilo "{task}" bo izvedeno ob {time}.'
+    WILL_START_NOW: 'Opravilo "{task}" bo ravnokar izvedeno.'
+  SilverStripe\CronTask\CronTaskStatus:
+    PLURALNAME: 'Status previdenih opravil'
+    PLURALS:
+      one: 'Status predvidenih opravil'
+      two: '{count} statusa predvidenih opravil'
+      few: '{count} statusov predvidenih opravil'
+      other: '{count} statusov predvidenih opravil'
+    SINGULARNAME: 'Status previdenih opravil'
+    db_LastChecked: 'Nazadnje preverjeno'
+    db_LastRun: 'Nazadnje izvedeno'
+    db_TaskClass: 'Razred opravila'

@@ -1,0 +1,15 @@
+sv:
+  SilverStripe\CronTask\Controllers\CronTaskController:
+    NO_IMPLEMENTERS: 'Det finns inga implementationer av CronTask att köra'
+    WILL_RUN_AT: '{task} kommer att köras på {time}'
+    WILL_START_NOW: '{task} kommer att starta nu.'
+  SilverStripe\CronTask\CronTaskController:
+    NO_IMPLEMENTERS: 'Det finns inga implementationer av CronTask att köra'
+    WILL_RUN_AT: '{task} kommer att köras på {time}'
+    WILL_START_NOW: '{task} kommer att starta nu.'
+  SilverStripe\CronTask\CronTaskStatus:
+    PLURALNAME: 'Cronjobb status'
+    SINGULARNAME: 'Cronjobb status'
+    db_LastChecked: 'Senast kontrollerade'
+    db_LastRun: 'Senast körd'
+    db_TaskClass: 'Task klass'
