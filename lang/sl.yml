@@ -10,10 +10,10 @@ sl:
   SilverStripe\CronTask\CronTaskStatus:
     PLURALNAME: 'Status previdenih opravil'
     PLURALS:
-      one: 'Status predvidenih opravil'
-      two: '{count} statusa predvidenih opravil'
       few: '{count} statusov predvidenih opravil'
+      one: 'Status predvidenih opravil'
       other: '{count} statusov predvidenih opravil'
+      two: '{count} statusa predvidenih opravil'
     SINGULARNAME: 'Status previdenih opravil'
     db_LastChecked: 'Nazadnje preverjeno'
     db_LastRun: 'Nazadnje izvedeno'
