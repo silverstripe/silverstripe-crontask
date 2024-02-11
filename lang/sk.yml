@@ -1,0 +1,20 @@
+sk:
+  SilverStripe\CronTask\Controllers\CronTaskController:
+    NO_IMPLEMENTERS: 'Neexistujú žiadni implementátori CronTask na spustenie'
+    WILL_RUN_AT: '{task} sa spustí o {time}.'
+    WILL_START_NOW: '{task} sa spustí teraz.'
+  SilverStripe\CronTask\CronTaskController:
+    NO_IMPLEMENTERS: 'Neexistujú žiadni implementátori CronTask na spustenie'
+    WILL_RUN_AT: '{task} sa spustí o {time}.'
+    WILL_START_NOW: '{task} sa spustí teraz.'
+  SilverStripe\CronTask\CronTaskStatus:
+    PLURALNAME: 'Stavy úloh Cron'
+    PLURALS:
+      few: '{count} stavy úloh Cron'
+      many: '{count} stavov úloh Cron'
+      one: 'Stav úloh Cron'
+      other: '{count} stavov úloh Cron'
+    SINGULARNAME: 'Stav úloh Cron'
+    db_LastChecked: 'Posledná kontrola'
+    db_LastRun: 'Posledné spustenie'
+    db_TaskClass: 'Trieda úloh'
