@@ -20,6 +20,6 @@ class TestCron implements TestOnly, CronTask
 
     public function process()
     {
-        ++self::$times_run;
+        ++TestCron::$times_run;
     }
 }
