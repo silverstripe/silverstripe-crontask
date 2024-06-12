@@ -1,7 +1,6 @@
 # Silverstripe CronTask
 
 [![CI](https://github.com/silverstripe/silverstripe-crontask/actions/workflows/ci.yml/badge.svg)](https://github.com/silverstripe/silverstripe-crontask/actions/workflows/ci.yml)
-[![Silverstripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
 
 Gives developers an ability to configure cron-like tasks through the code.
 
@@ -246,4 +245,3 @@ Thanks to [Michael Dowling](http://mtdowling.com/blog/2012/06/03/cron-expression
 for doing the actual job of parsing cron expressions.
 
 This module is just a thin wrapper around his code.
-
