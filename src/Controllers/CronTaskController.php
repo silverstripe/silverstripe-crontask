@@ -13,6 +13,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\CronTask\CronTaskStatus;
 use SilverStripe\CronTask\Interfaces\CronTask;
+use SilverStripe\Dev\Deprecation;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
@@ -22,6 +23,7 @@ use SilverStripe\Security\Security;
  *
  * The default route to this controller is 'dev/cron'
  *
+ * @deprecated 3.1.0 Will be replaced with SilverStripe\CronTask\Cli\CronTaskCommand
  */
 class CronTaskController extends Controller
 {
@@ -31,6 +33,18 @@ class CronTaskController extends Controller
      * @var int A number from 0 to 2
      */
     protected $verbosity = 1;
+
+    public function __construct()
+    {
+        parent::__construct();
+        Deprecation::withNoReplacement(function () {
+            Deprecation::notice(
+                '3.1.0',
+                'Will be replaced with SilverStripe\CronTask\Cli\CronTaskCommand',
+                Deprecation::SCOPE_CLASS
+            );
+        });
+    }
 
     /**
      * Tell the controller how noisy it may be
