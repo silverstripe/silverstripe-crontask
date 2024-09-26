@@ -76,14 +76,14 @@ class TestCron implements CronTask
 }
 ```
 
-Run `vendor/bin/sake dev/build flush=1` to make Silverstripe aware of the new
+Run `vendor/bin/sake db:build --flush` to make Silverstripe aware of the new
 module.
 
 Then execute the crontask controller, it's preferable you do this via the CLI
 since that is how the server will execute it.
 
 ```
-vendor/bin/sake dev/cron
+vendor/bin/sake cron-task
 ```
 
 Server configuration
@@ -96,7 +96,7 @@ most common way is by adding a file to the `/etc/cron.d/` directory.
 First find the correct command to execute, for example:
 
 ```
-/usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake dev/cron
+/usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake cron-task
 ```
 
 Then find out which user the webserver is running on, for example `www-data`.
@@ -110,7 +110,7 @@ sudo vim /etc/cron.d/silverstripe-crontask
 The content of that file should be:
 
 ```
-* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake dev/cron
+* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake cron-task
 ```
 
 This will run every minute as the www-data user and check if there are any
@@ -122,7 +122,7 @@ adding quiet=1 - for example
 
 ```
 MAILTO=admin@example.com
-* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/framework/cli-script.php dev/cron quiet=1
+* * * * * www-data /usr/bin/php /path/to/silverstripe/docroot/vendor/bin/sake cron-task --quiet
 ```
 
 **Warning**: Observe that the crontask module doesn't do any checking. If

@@ -3,12 +3,13 @@
 namespace SilverStripe\CronTask\Tests;
 
 use Cron\CronExpression;
-use SilverStripe\CronTask\Controllers\CronTask;
-use SilverStripe\CronTask\Controllers\CronTaskController;
+use SilverStripe\CronTask\Cli\CronTaskCommand;
 use SilverStripe\CronTask\CronTaskStatus;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @package crontask
@@ -35,7 +36,7 @@ class CronTaskControllerTest extends FunctionalTest
      */
     public function testIsTaskDue()
     {
-        $runner = CronTaskController::create();
+        $runner = new CronTaskCommand();
         $task = new CronTaskTest\TestCron();
         $cron = CronExpression::factory($task->getSchedule());
 
@@ -71,57 +72,53 @@ class CronTaskControllerTest extends FunctionalTest
      */
     public function testRunTask()
     {
-        $runner = CronTaskController::create();
-        $runner->setVerbosity(0);
+        $runner = new CronTaskCommand();
+        $output = new BufferedOutput();
         $task = new CronTaskTest\TestCron();
 
         // Assuming first run, match the exact time (seconds are ignored)
         $this->assertEquals(0, CronTaskTest\TestCron::$times_run);
         DBDatetime::set_mock_now('2010-06-20 13:00:10');
-        $runner->runTask($task);
+        $runner->runTask($task, $output);
         $this->assertEquals(1, CronTaskTest\TestCron::$times_run);
 
         // Test that re-requsting the task in the same minute do not retrigger another run
         DBDatetime::set_mock_now('2010-06-20 13:00:40');
-        $runner->runTask($task);
+        $runner->runTask($task, $output);
         $this->assertEquals(1, CronTaskTest\TestCron::$times_run);
 
         // Job prior to next hour mark should not run
         DBDatetime::set_mock_now('2010-06-20 13:40:00');
-        $runner->runTask($task);
+        $runner->runTask($task, $output);
         $this->assertEquals(1, CronTaskTest\TestCron::$times_run);
 
         // Jobs just after the next hour mark should run
         DBDatetime::set_mock_now('2010-06-20 14:10:00');
-        $runner->runTask($task);
+        $runner->runTask($task, $output);
         $this->assertEquals(2, CronTaskTest\TestCron::$times_run);
 
         // Jobs run on the exact next expected date should run
         DBDatetime::set_mock_now('2010-06-20 15:00:00');
-        $runner->runTask($task);
+        $runner->runTask($task, $output);
         $this->assertEquals(3, CronTaskTest\TestCron::$times_run);
 
         // Jobs somehow delayed a whole day should be run
         DBDatetime::set_mock_now('2010-06-21 13:40:00');
-        $runner->runTask($task);
+        $runner->runTask($task, $output);
         $this->assertEquals(4, CronTaskTest\TestCron::$times_run);
     }
-
 
     // normal cron output includes the current date/time - we check for that
     // the exact output here could vary depending on what other modules are installed
     public function testDefaultQuietFlagOutput()
     {
-        $this->loginWithPermission('ADMIN');
-        $this->expectOutputRegex('#' . DBDatetime::now()->Format(DBDate::ISO_DATE) . '#');
-        $this->get('dev/cron?debug=1');
-    }
-
-    // with the flag set we want no output
-    public function testQuietFlagOnOutput()
-    {
-        $this->loginWithPermission('ADMIN');
-        $this->expectOutputString('');
-        $this->get('dev/cron?quiet=1');
+        $input = new ArrayInput([]);
+        $output = new BufferedOutput();
+        $command = new CronTaskCommand();
+        $command->run($input, $output);
+        $this->assertMatchesRegularExpression(
+            '#' . DBDatetime::now()->Format(DBDate::ISO_DATE) . '#',
+            $output->fetch()
+        );
     }
 }

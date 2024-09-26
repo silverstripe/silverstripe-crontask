@@ -3,8 +3,8 @@
 namespace SilverStripe\CronTask\Interfaces;
 
 /**
- * By implementing this interface a /dev/cron will be able to start in on the
- * expression that you return frmo getSchedule();
+ * By implementing this interface `sake cron-task` will be able to start in on the
+ * expression that you return from getSchedule();
  *
  * @package crontask
  */
