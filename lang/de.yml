@@ -1,0 +1,7 @@
+de:
+  SilverStripe\CronTask\Controllers\CronTaskController:
+    WILL_RUN_AT: '{task} wird um {time} ausgeführt.'
+    WILL_START_NOW: '{task} wird jetzt ausgeführt.'
+  SilverStripe\CronTask\CronTaskController:
+    WILL_RUN_AT: '{task} wird um {time} ausgeführt.'
+    WILL_START_NOW: '{task} wird jetzt ausgeführt.'
