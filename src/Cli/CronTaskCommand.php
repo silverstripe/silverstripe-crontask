@@ -18,9 +18,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  * This command finds, checks and processes all crontasks
  * Hidden because there's no reason to run this manually other than for debugging
  */
-#[AsCommand('cron-task', 'Runs cron tasks that are scheduled to be run', aliases: ['dev/cron'], hidden: true)]
+#[AsCommand('cron-task', 'Runs cron tasks that are scheduled to be run', aliases: ['dev/cron'])]
 class CronTaskCommand extends Command
 {
+    protected function configure(): void
+    {
+        parent::configure();
+        $this->addOption('debug', description: 'Enable debug output');
+    }
+
     /**
      * Determine if a task should be run
      */
@@ -52,6 +58,10 @@ class CronTaskCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ($input->getOption('debug')) {
+            $output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
+        }
+
         // Check each task
         $tasks = ClassInfo::implementorsOf(CronTask::class);
         if (empty($tasks)) {
