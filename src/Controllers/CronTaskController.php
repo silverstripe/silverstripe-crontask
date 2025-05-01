@@ -23,7 +23,7 @@ use SilverStripe\Security\Security;
  *
  * The default route to this controller is 'dev/cron'
  *
- * @deprecated 3.1.0 Will be replaced with SilverStripe\CronTask\Cli\CronTaskCommand
+ * @deprecated 3.1.0 Will be replaced with SilverStripe\CronTask\Cli\CronTaskCommand in a future major release
  */
 class CronTaskController extends Controller
 {
@@ -40,7 +40,7 @@ class CronTaskController extends Controller
         Deprecation::withSuppressedNotice(function () {
             Deprecation::notice(
                 '3.1.0',
-                'Will be replaced with SilverStripe\CronTask\Cli\CronTaskCommand',
+                'Will be replaced with SilverStripe\CronTask\Cli\CronTaskCommand in a future major release',
                 Deprecation::SCOPE_CLASS
             );
         });
